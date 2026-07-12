@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Solana Summer $SUMMER — It's Always Summer on Solana</title>
+<meta name="description" content="$SUMMER — the hottest memecoin on Solana. Grab your shades, it's Solana Summer. Live price, chart, and how to buy." />
+
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Solana Summer $SUMMER" />
+<meta property="og:description" content="It's always summer on Solana. ☀️ Grab your shades." />
+<meta property="og:image" content="assets/summer.png" />
+<meta property="og:url" content="https://solanasummer.perplana.com" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Solana Summer $SUMMER" />
+<meta name="twitter:description" content="It's always summer on Solana. ☀️" />
+<meta name="twitter:image" content="assets/summer.png" />
+
+<link rel="icon" type="image/png" href="assets/summer.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --sun:#ffd23f;
+    --sun-deep:#ff9e00;
+    --coral:#ff6b4a;
+    --pink:#ff4d8d;
+    --purple:#7b2ff7;
+    --sea:#00c2c7;
+    --sea-deep:#0090a8;
+    --sand:#ffe8c9;
+    --ink:#2a1650;
+    --white:#fffdf7;
+    --shadow:0 12px 40px rgba(123,47,247,.18);
+    --radius:22px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    color:var(--ink);
+    background:linear-gradient(180deg,#ffcf6b 0%,#ff8a5b 26%,#ff5f8d 55%,#8a3ff2 100%);
+    overflow-x:hidden;
+    min-height:100vh;
+  }
+  h1,h2,h3,.display{font-family:'Baloo 2',sans-serif;line-height:1.02}
+  a{color:inherit}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+  .btn{
+    display:inline-flex;align-items:center;gap:.5em;
+    font-family:'Baloo 2';font-weight:800;font-size:1.05rem;
+    padding:14px 26px;border-radius:999px;border:none;cursor:pointer;
+    text-decoration:none;transition:transform .15s ease, box-shadow .15s ease;
+    box-shadow:0 8px 22px rgba(42,22,80,.25);
+  }
+  .btn:hover{transform:translateY(-3px) rotate(-1deg);box-shadow:0 14px 30px rgba(42,22,80,.32)}
+  .btn-sun{background:linear-gradient(135deg,var(--sun),var(--sun-deep));color:var(--ink)}
+  .btn-ghost{background:rgba(255,255,255,.18);color:#fff;backdrop-filter:blur(6px);border:1.5px solid rgba(255,255,255,.4)}
+
+  /* ---------- SKY / SUN ---------- */
+  .sky{position:fixed;inset:0;z-index:-2;overflow:hidden}
+  .sun{
+    position:absolute;top:-90px;left:50%;transform:translateX(-50%);
+    width:340px;height:340px;border-radius:50%;
+    background:radial-gradient(circle at 50% 45%,#fff6cf,#ffd23f 55%,#ff9e00 100%);
+    box-shadow:0 0 120px 40px rgba(255,210,63,.55);
+    animation:bob 7s ease-in-out infinite;
+  }
+  @keyframes bob{50%{transform:translateX(-50%) translateY(18px)}}
+  .rays{position:absolute;top:80px;left:50%;transform:translateX(-50%);width:900px;height:900px;
+    background:repeating-conic-gradient(from 0deg,rgba(255,255,255,.10) 0deg 8deg,transparent 8deg 22deg);
+    border-radius:50%;animation:spin 90s linear infinite;opacity:.5}
+  @keyframes spin{to{transform:translateX(-50%) rotate(360deg)}}
+  .cloud{position:absolute;background:rgba(255,255,255,.85);border-radius:100px;filter:blur(1px);opacity:.9;
+    box-shadow:40px 0 0 -6px rgba(255,255,255,.85),-40px 5px 0 -8px rgba(255,255,255,.85)}
+  .c1{width:120px;height:38px;top:120px;left:12%;animation:drift 34s linear infinite}
+  .c2{width:90px;height:30px;top:210px;right:10%;animation:drift 46s linear infinite reverse}
+  @keyframes drift{0%{transform:translateX(-30px)}50%{transform:translateX(30px)}100%{transform:translateX(-30px)}}
+
+  /* ---------- NAV ---------- */
+  nav{position:sticky;top:0;z-index:50;padding:14px 0;
+    background:linear-gradient(180deg,rgba(255,207,107,.85),rgba(255,207,107,0));
+    backdrop-filter:blur(4px)}
+  nav .wrap{display:flex;align-items:center;gap:16px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Baloo 2';font-weight:800;font-size:1.25rem;color:var(--ink);text-decoration:none}
+  .brand img{width:40px;height:40px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+  .nav-links{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .nav-links a.txt{display:none;font-weight:900;color:var(--ink);text-decoration:none;padding:8px 12px;border-radius:999px}
+  .nav-links a.txt:hover{background:rgba(255,255,255,.35)}
+  @media(min-width:820px){.nav-links a.txt{display:inline}}
+
+  /* ---------- HERO ---------- */
+  header.hero{padding:56px 0 40px;text-align:center;position:relative}
+  .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.25);
+    border:1.5px solid rgba(255,255,255,.5);color:#fff;font-weight:900;
+    padding:7px 16px;border-radius:999px;font-size:.85rem;letter-spacing:.5px;backdrop-filter:blur(6px)}
+  .hero h1{font-size:clamp(3rem,11vw,7rem);color:#fff;margin:18px 0 6px;
+    text-shadow:0 6px 0 rgba(123,47,247,.35),0 14px 30px rgba(42,22,80,.35)}
+  .hero h1 .tick{color:var(--sun)}
+  .tagline{font-size:clamp(1.1rem,3.6vw,1.6rem);color:#fff;font-weight:900;opacity:.96;margin-bottom:8px}
+  .sub{color:#fff;opacity:.9;max-width:560px;margin:0 auto 26px;font-size:1.05rem}
+  .hero-logo{width:170px;height:170px;border-radius:36px;margin:6px auto 0;display:block;
+    border:5px solid #fff;box-shadow:var(--shadow);animation:bob 6s ease-in-out infinite}
+  .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+
+  /* ---------- CA BAR ---------- */
+  .ca{margin:26px auto 0;max-width:640px;background:rgba(42,22,80,.35);border:1.5px solid rgba(255,255,255,.35);
+    border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:10px;backdrop-filter:blur(8px)}
+  .ca .lbl{font-weight:900;color:var(--sun);font-size:.8rem;white-space:nowrap}
+  .ca code{color:#fff;font-family:ui-monospace,monospace;font-size:.82rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:left}
+  .copy{background:var(--sun);color:var(--ink);border:none;font-weight:900;padding:8px 14px;border-radius:10px;cursor:pointer;font-family:'Baloo 2';white-space:nowrap}
+  .copy:hover{background:#fff}
+  .copy.done{background:#5fe08a}
+
+  /* ---------- STATS ---------- */
+  section{padding:54px 0}
+  .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:820px;margin:0 auto}
+  @media(min-width:720px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
+  .stat{background:rgba(255,255,255,.92);border-radius:var(--radius);padding:20px 16px;text-align:center;box-shadow:var(--shadow)}
+  .stat .k{font-size:.78rem;font-weight:900;color:var(--sea-deep);text-transform:uppercase;letter-spacing:.6px}
+  .stat .v{font-family:'Baloo 2';font-weight:800;font-size:1.7rem;color:var(--ink);margin-top:4px}
+  .stat .v.loading{opacity:.4}
+  .live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#38d16a;margin-right:6px;box-shadow:0 0 0 0 rgba(56,209,106,.6);animation:pulse 1.8s infinite}
+  @keyframes pulse{70%{box-shadow:0 0 0 8px rgba(56,209,106,0)}100%{box-shadow:0 0 0 0 rgba(56,209,106,0)}}
+
+  /* ---------- CARD PANELS ---------- */
+  .panel{background:var(--white);border-radius:34px;padding:40px 28px;box-shadow:var(--shadow)}
+  .section-title{text-align:center;font-size:clamp(2rem,6vw,3rem);color:var(--ink);margin-bottom:6px}
+  .section-kicker{text-align:center;color:var(--sea-deep);font-weight:900;letter-spacing:1px;text-transform:uppercase;font-size:.85rem;margin-bottom:26px}
+
+  /* HOW TO BUY */
+  .steps{display:grid;grid-template-columns:1fr;gap:18px;max-width:900px;margin:0 auto}
+  @media(min-width:720px){.steps{grid-template-columns:repeat(2,1fr)}}
+  .step{display:flex;gap:16px;align-items:flex-start;background:linear-gradient(135deg,#fff,var(--sand));border-radius:20px;padding:20px;border:2px solid rgba(255,158,0,.25)}
+  .step .n{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-family:'Baloo 2';font-weight:800;font-size:1.3rem;color:#fff;background:linear-gradient(135deg,var(--coral),var(--pink))}
+  .step h3{font-size:1.15rem;margin-bottom:4px}
+  .step p{font-size:.95rem;color:#5a4a72}
+  .step a{color:var(--purple);font-weight:900}
+
+  /* CHART */
+  .chart-frame{position:relative;width:100%;padding-top:min(64%,560px);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);background:#12042e}
+  .chart-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+  /* TOKENOMICS */
+  .tok{display:grid;grid-template-columns:1fr;gap:16px;max-width:820px;margin:0 auto}
+  @media(min-width:720px){.tok{grid-template-columns:repeat(3,1fr)}}
+  .tok .card{background:linear-gradient(135deg,var(--sea),var(--sea-deep));color:#fff;border-radius:20px;padding:24px;text-align:center}
+  .tok .card .big{font-family:'Baloo 2';font-weight:800;font-size:2rem}
+  .tok .card .lbl{font-weight:900;opacity:.9;margin-top:4px}
+
+  /* CREATOR FEES */
+  .fees{display:grid;grid-template-columns:1fr;gap:20px;max-width:860px;margin:0 auto}
+  @media(min-width:720px){.fees{grid-template-columns:repeat(2,1fr)}}
+  .fee-card{position:relative;border-radius:24px;padding:30px 26px;color:#fff;overflow:hidden;box-shadow:var(--shadow)}
+  .fee-card.burn{background:linear-gradient(150deg,var(--coral),var(--pink) 65%,var(--purple))}
+  .fee-card.ansem{background:linear-gradient(150deg,var(--sun-deep),var(--coral) 70%,var(--pink))}
+  .fee-card .fee-ico{font-size:2.6rem;line-height:1;margin-bottom:10px}
+  .fee-card h3{font-size:1.5rem;margin-bottom:8px}
+  .fee-card p{font-size:1rem;opacity:.96;line-height:1.5}
+  .fee-card p a{color:#fff;font-weight:900;text-decoration:underline}
+  .fee-tag{display:inline-block;margin-top:16px;background:rgba(255,255,255,.22);border:1.5px solid rgba(255,255,255,.4);
+    padding:6px 14px;border-radius:999px;font-weight:900;font-size:.82rem;letter-spacing:.3px}
+
+  /* COMMUNITY */
+  .community{text-align:center}
+  .social-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+  .social{display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;text-decoration:none;
+    padding:16px 26px;border-radius:18px;font-family:'Baloo 2';font-weight:800;font-size:1.1rem;transition:transform .15s}
+  .social:hover{transform:translateY(-4px)}
+  .social.tg{background:linear-gradient(135deg,#29a9eb,#0088cc)}
+  .social.x{background:linear-gradient(135deg,#1d1d1f,#000)}
+
+  /* PALM / WAVE FOOTER */
+  .wave{display:block;width:100%;height:70px;margin-bottom:-6px}
+  footer{background:#12042e;color:#fff;text-align:center;padding:40px 20px 60px}
+  footer .brand{color:#fff;justify-content:center;margin-bottom:12px}
+  footer p{opacity:.7;font-size:.9rem;max-width:640px;margin:0 auto 8px}
+  footer .disc{opacity:.45;font-size:.78rem;margin-top:16px}
+  .float{position:fixed;bottom:18px;right:18px;z-index:40}
+  .float .btn{box-shadow:0 10px 30px rgba(0,0,0,.35)}
+</style>
+</head>
+<body>
+
+<div class="sky" aria-hidden="true">
+  <div class="rays"></div>
+  <div class="sun"></div>
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+</div>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="assets/summer.png" alt="$SUMMER"/> Solana Summer</a>
+    <div class="nav-links">
+      <a class="txt" href="#buy">How to Buy</a>
+      <a class="txt" href="#chart">Chart</a>
+      <a class="txt" href="#tokenomics">Tokenomics</a>
+      <a class="txt" href="#fees">Fees</a>
+      <a class="txt" href="#community">Community</a>
+      <a class="btn btn-sun" href="#buy">Buy $SUMMER ☀️</a>
+    </div>
+  </div>
+</nav>
+
+<a id="top"></a>
+<header class="hero">
+  <div class="wrap">
+    <span class="badge">☀️ IT'S ALWAYS SUMMER ON SOLANA</span>
+    <h1>Solana <span class="tick">$SUMMER</span></h1>
+    <p class="tagline">Grab your shades. Ride the wave. 🌊</p>
+    <p class="sub">The hottest meme of the season on Solana. No suits, no winter — just vibes, sunshine, and green candles.</p>
+    <img class="hero-logo" src="assets/summer.png" alt="Solana Summer logo"/>
+
+    <div class="ca">
+      <span class="lbl">CA</span>
+      <code id="caText">3AtR8x9UCzDYneRSx93pQLK5uFsr57iLbopMtHPEpump</code>
+      <button class="copy" id="copyBtn">Copy</button>
+    </div>
+
+    <div class="cta" style="margin-top:22px">
+      <a class="btn btn-sun" id="buyTop" href="https://jup.ag/swap/SOL-3AtR8x9UCzDYneRSx93pQLK5uFsr57iLbopMtHPEpump" target="_blank" rel="noopener">Buy on Jupiter</a>
+      <a class="btn btn-ghost" href="https://pump.fun/coin/3AtR8x9UCzDYneRSx93pQLK5uFsr57iLbopMtHPEpump" target="_blank" rel="noopener">View on pump.fun</a>
+    </div>
+  </div>
+</header>
+
+<!-- LIVE STATS -->
+<section style="padding-top:10px">
+  <div class="wrap">
+    <p class="section-kicker"><span class="live-dot"></span>Live from DexScreener</p>
+    <div class="stats-grid">
+      <div class="stat"><div class="k">Price</div><div class="v loading" id="stPrice">—</div></div>
+      <div class="stat"><div class="k">Market Cap</div><div class="v loading" id="stMcap">—</div></div>
+      <div class="stat"><div class="k">24h Volume</div><div class="v loading" id="stVol">—</div></div>
+      <div class="stat"><div class="k">24h Change</div><div class="v loading" id="stChg">—</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO BUY -->
+<section id="buy">
+  <div class="wrap">
+    <div class="panel">
+      <h2 class="section-title">How to Buy 🏄</h2>
+      <p class="section-kicker">From zero to summer in 4 steps</p>
+      <div class="steps">
+        <div class="step"><div class="n">1</div><div><h3>Get a Solana Wallet</h3><p>Download <a href="https://phantom.app" target="_blank" rel="noopener">Phantom</a> or <a href="https://solflare.com" target="_blank" rel="noopener">Solflare</a> on mobile or as a browser extension. It's free.</p></div></div>
+        <div class="step"><div class="n">2</div><div><h3>Load up on SOL</h3><p>Buy SOL from any exchange (Coinbase, Binance, etc.) and send it to your wallet address.</p></div></div>
+        <div class="step"><div class="n">3</div><div><h3>Swap for $SUMMER</h3><p>Head to <a href="https://jup.ag/swap/SOL-3AtR8x9UCzDYneRSx93pQLK5uFsr57iLbopMtHPEpump" target="_blank" rel="noopener">Jupiter</a>, paste the contract, and swap SOL → SUMMER.</p></div></div>
+        <div class="step"><div class="n">4</div><div><h3>Welcome to Summer ☀️</h3><p>You're in. Hold, vibe, and join the <a href="https://t.me/summerspl" target="_blank" rel="noopener">community</a>. See you on the beach.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHART -->
+<section id="chart">
+  <div class="wrap">
+    <h2 class="section-title" style="color:#fff;text-shadow:0 4px 20px rgba(42,22,80,.4)">Live Chart 📈</h2>
+    <p class="section-kicker" style="color:#fff">Watch the wave in real time</p>
+    <div class="chart-frame">
+      <iframe src="https://dexscreener.com/solana/3UssEiCvizQfDdHYB15f39jD3D2ygiowtZZPHVj7wCsE?embed=1&theme=dark&trades=0&info=0" title="SUMMER chart" loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- TOKENOMICS -->
+<section id="tokenomics">
+  <div class="wrap">
+    <div class="panel">
+      <h2 class="section-title">Tokenomics 🌴</h2>
+      <p class="section-kicker">Simple, fair, and sunny</p>
+      <div class="tok">
+        <div class="card"><div class="big">1B</div><div class="lbl">Total Supply</div></div>
+        <div class="card"><div class="big">0%</div><div class="lbl">Buy / Sell Tax</div></div>
+        <div class="card"><div class="big">🔥</div><div class="lbl">LP Burned / Locked</div></div>
+      </div>
+      <p style="text-align:center;color:#5a4a72;max-width:620px;margin:24px auto 0">
+        $SUMMER launched fair on pump.fun — no team allocation games, no presale. Just a community riding the summer wave together. 🌊
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- CREATOR FEES -->
+<section id="fees">
+  <div class="wrap">
+    <div class="panel">
+      <h2 class="section-title">The Summer Engine 🔥</h2>
+      <p class="section-kicker">Where the creator fees go</p>
+      <p style="text-align:center;color:#5a4a72;max-width:640px;margin:0 auto 30px">
+        The creator fees from $SUMMER don't sit in a wallet — they're put straight back to work for the community. Two ways:
+      </p>
+      <div class="fees">
+        <div class="fee-card burn">
+          <div class="fee-ico">🔥</div>
+          <h3>Buyback &amp; Burn</h3>
+          <p>A share of every creator fee is used to buy $SUMMER off the market and burn it — permanently shrinking the supply. Fewer coins, hotter summer.</p>
+          <span class="fee-tag">Deflationary by design</span>
+        </div>
+        <div class="fee-card ansem">
+          <div class="fee-ico">🎁</div>
+          <h3>Sent to Ansem</h3>
+          <p>A portion of the creator fees is sent to <a href="https://x.com/blknoiz06" target="_blank" rel="noopener">Ansem</a> — putting $SUMMER in front of one of Solana's biggest voices and rewarding the culture that makes szn happen.</p>
+          <span class="fee-tag">Reach &amp; culture</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMUNITY -->
+<section id="community">
+  <div class="wrap">
+    <div class="panel community">
+      <h2 class="section-title">Join the Beach Party 🎉</h2>
+      <p class="section-kicker">The vibe is the utility</p>
+      <p style="color:#5a4a72;max-width:560px;margin:0 auto 22px">Every summer needs a crew. Come hang, share memes, and catch the next wave with us.</p>
+      <div class="social-row">
+        <a class="social x" href="https://x.com/i/communities/2038787391264039255" target="_blank" rel="noopener">𝕏 &nbsp;Community</a>
+        <a class="social tg" href="https://t.me/summerspl" target="_blank" rel="noopener">✈️ Telegram</a>
+        <a class="social" href="https://dexscreener.com/solana/3UssEiCvizQfDdHYB15f39jD3D2ygiowtZZPHVj7wCsE" target="_blank" rel="noopener">📊 DexScreener</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<svg class="wave" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
+  <path fill="#12042e" d="M0,40 C240,80 480,0 720,30 C960,60 1200,10 1440,40 L1440,70 L0,70 Z"></path>
+</svg>
+<footer>
+  <a class="brand" href="#top"><img src="assets/summer.png" alt="" style="width:36px;height:36px;border-radius:10px"/> Solana Summer $SUMMER</a>
+  <p>It's always summer on Solana. ☀️🌊🌴</p>
+  <p class="disc">$SUMMER is a meme coin with no intrinsic value or expectation of financial return. This site is for entertainment purposes only and is not financial advice. Crypto is volatile — do your own research and never invest more than you can afford to lose.</p>
+</footer>
+
+<div class="float"><a class="btn btn-sun" href="#buy">☀️ Buy $SUMMER</a></div>
+
+<script>
+  // Copy contract
+  const CA = "3AtR8x9UCzDYneRSx93pQLK5uFsr57iLbopMtHPEpump";
+  const copyBtn = document.getElementById('copyBtn');
+  copyBtn.addEventListener('click', async () => {
+    try{
+      await navigator.clipboard.writeText(CA);
+      copyBtn.textContent = 'Copied ✓';
+      copyBtn.classList.add('done');
+      setTimeout(()=>{copyBtn.textContent='Copy';copyBtn.classList.remove('done')},1600);
+    }catch(e){
+      const r=document.createRange();r.selectNode(document.getElementById('caText'));
+      window.getSelection().removeAllRanges();window.getSelection().addRange(r);
+    }
+  });
+
+  // Live stats
+  const PAIR = "3UssEiCvizQfDdHYB15f39jD3D2ygiowtZZPHVj7wCsE";
+  const fmtUsd = n => {
+    n = Number(n);
+    if(!isFinite(n)) return '—';
+    if(n >= 1e9) return '$'+(n/1e9).toFixed(2)+'B';
+    if(n >= 1e6) return '$'+(n/1e6).toFixed(2)+'M';
+    if(n >= 1e3) return '$'+(n/1e3).toFixed(1)+'K';
+    if(n >= 1)   return '$'+n.toFixed(2);
+    // tiny price: show significant digits
+    return '$'+n.toPrecision(3).replace(/0+$/,'');
+  };
+  async function loadStats(){
+    try{
+      const res = await fetch('https://api.dexscreener.com/latest/dex/pairs/solana/'+PAIR, {cache:'no-store'});
+      const data = await res.json();
+      const p = (data.pairs && data.pairs[0]) || data.pair;
+      if(!p) return;
+      const set = (id,val)=>{const el=document.getElementById(id);el.textContent=val;el.classList.remove('loading');};
+      set('stPrice', fmtUsd(p.priceUsd));
+      set('stMcap',  fmtUsd(p.marketCap ?? p.fdv));
+      set('stVol',   fmtUsd(p.volume && p.volume.h24));
+      const chg = p.priceChange && p.priceChange.h24;
+      const chEl = document.getElementById('stChg');
+      const c = Number(chg);
+      chEl.textContent = (isFinite(c)?(c>=0?'+':'')+c.toFixed(1)+'%':'—');
+      chEl.style.color = isFinite(c) ? (c>=0 ? '#1ea85a' : '#e23d5b') : '';
+      chEl.classList.remove('loading');
+    }catch(e){/* keep placeholders */}
+  }
+  loadStats();
+  setInterval(loadStats, 30000);
+</script>
+</body>
+</html>
