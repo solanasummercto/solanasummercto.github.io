@@ -163,8 +163,27 @@
   .elive-v{font-family:'Baloo 2';font-weight:800;font-size:1.9rem;margin-top:6px;line-height:1.05;transition:opacity .3s}
   .elive-v.pending{opacity:.55}
   .elive-sub{font-size:.82rem;opacity:.92;margin-top:2px;font-weight:700}
-  .engine-updated{text-align:center;color:#8a7aa5;font-weight:800;font-size:.82rem;margin:0 auto 30px}
+  .engine-updated{text-align:center;color:#8a7aa5;font-weight:800;font-size:.82rem;margin:0 auto 22px}
   .engine-updated .live-dot{vertical-align:middle}
+
+  /* LIVE ACTIVITY FEED */
+  .feed{max-width:860px;margin:0 auto 30px;background:linear-gradient(180deg,#fff,var(--sand));
+    border:2px solid rgba(255,158,0,.25);border-radius:22px;overflow:hidden}
+  .feed-head{font-family:'Baloo 2';font-weight:800;color:var(--ink);padding:16px 20px;
+    background:rgba(255,210,63,.35);font-size:1.05rem}
+  .feed-list{max-height:340px;overflow-y:auto}
+  .feed-row{display:flex;align-items:center;gap:12px;padding:12px 20px;border-top:1px solid rgba(255,158,0,.18);
+    text-decoration:none;color:var(--ink);transition:background .12s}
+  .feed-row:hover{background:rgba(255,255,255,.7)}
+  .feed-ic{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:1.1rem;background:#fff;box-shadow:0 2px 6px rgba(42,22,80,.12)}
+  .feed-main{flex:1;min-width:0}
+  .feed-t{font-weight:900;font-size:.95rem}
+  .feed-sub{font-size:.8rem;color:#8a7aa5;font-weight:700}
+  .feed-amt{font-family:'Baloo 2';font-weight:800;text-align:right;white-space:nowrap;font-size:.98rem}
+  .feed-row.buyback .feed-amt{color:#0a9d6a}
+  .feed-row.burn .feed-amt{color:#e2452f}
+  .feed-row.ansem .feed-amt{color:#d63a86}
+  .feed-empty{padding:22px 20px;text-align:center;color:#8a7aa5;font-weight:700}
 
   /* CREATOR FEES */
   .fees{display:grid;grid-template-columns:1fr;gap:20px;max-width:860px;margin:0 auto}
@@ -334,6 +353,12 @@
       </div>
       <p class="engine-updated"><span class="live-dot"></span><span id="enUpdated">syncing on-chain data…</span></p>
 
+      <!-- LIVE ACTIVITY FEED -->
+      <div class="feed" id="engineFeed" hidden>
+        <div class="feed-head">🌊 Live Activity — every buyback, burn &amp; transfer</div>
+        <div class="feed-list" id="feedList"></div>
+      </div>
+
       <div class="fees">
         <div class="fee-card burn">
           <div class="fee-ico">🔥</div>
@@ -490,6 +515,7 @@
         setV('enAnsem', fmtToken(s.ansem.summer));
         setV('enAnsemSub', 'across '+s.ansem.count+' transfer'+(s.ansem.count===1?'':'s'));
       }
+      renderFeed(s.feed);
       const u = document.getElementById('enUpdated');
       if(u && s.updatedAt) u.textContent = 'Live on-chain · updated '+ago(s.updatedAt);
     }catch(e){
@@ -497,6 +523,35 @@
       if(u) u.textContent = burnedOk ? 'Burn live from chain · buyback data syncing…' : 'Syncing on-chain data…';
     }
   }
+  // Render the itemized activity feed.
+  const FEED_META = {
+    buyback: { ic:'🟢', label:'Dev Buyback', cls:'buyback', sign:'+' },
+    burn:    { ic:'🔥', label:'Burn',        cls:'burn',    sign:'−' },
+    ansem:   { ic:'🎁', label:'Sent to Ansem', cls:'ansem', sign:'→' },
+  };
+  function renderFeed(feed){
+    const box = document.getElementById('engineFeed');
+    const list = document.getElementById('feedList');
+    if(!box || !list) return;
+    if(!Array.isArray(feed) || feed.length === 0){
+      box.hidden = false;
+      list.innerHTML = '<div class="feed-empty">Waiting for the next on-chain move… ☀️</div>';
+      return;
+    }
+    box.hidden = false;
+    list.innerHTML = feed.map(ev => {
+      const m = FEED_META[ev.type] || FEED_META.buyback;
+      const amt = m.sign + fmtToken(ev.summer) + ' SUMMER';
+      const sol = ev.sol ? ' · ' + ev.sol.toFixed(2) + ' SOL' : '';
+      const when = ev.time ? ago(new Date(ev.time*1000).toISOString()) : '';
+      return `<a class="feed-row ${m.cls}" href="https://solscan.io/tx/${ev.sig}" target="_blank" rel="noopener">
+        <span class="feed-ic">${m.ic}</span>
+        <span class="feed-main"><span class="feed-t">${m.label}</span><br><span class="feed-sub">${when}${sol}</span></span>
+        <span class="feed-amt">${amt}</span>
+      </a>`;
+    }).join('');
+  }
+
   engineStats();
   setInterval(engineStats, 60000);
 </script>

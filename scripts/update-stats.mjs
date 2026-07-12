@@ -59,33 +59,42 @@ async function getPrice() {
   }
 }
 
-// Walk the dev wallet's full parsed history via Helius enhanced-tx API.
+// Walk the dev wallet's FULL parsed history via Helius enhanced-tx API.
+// Aggregates all-time totals AND collects an itemized event feed.
 async function scanDevWallet() {
   const out = {
-    buybackSummer: 0,
-    buybackSol: 0,
-    buybackCount: 0,
-    ansemSummer: 0,
-    ansemSol: 0,
-    ansemCount: 0,
-    lastSig: null,
+    buybackSummer: 0, buybackSol: 0, buybackCount: 0,
+    burnSummer: 0, burnCount: 0,
+    ansemSummer: 0, ansemSol: 0, ansemCount: 0,
+    feed: [],           // every individual event, newest first
   };
   if (!KEY) return out; // no key -> can't read parsed history; burns still work
 
   let before = undefined;
   let pages = 0;
-  const MAX_PAGES = 60; // 60 * 100 = 6000 txns cap
+  const MAX_PAGES = 100; // 100 * 100 = 10,000 txns cap (full history)
 
   while (pages < MAX_PAGES) {
     const r = await fetch(HELIUS_TX(DEV, before));
     if (!r.ok) throw new Error(`helius tx ${r.status}`);
     const txns = await r.json();
     if (!Array.isArray(txns) || txns.length === 0) break;
-    if (pages === 0) out.lastSig = txns[0].signature;
 
     for (const tx of txns) {
       const tt = tx.tokenTransfers || [];
       const nt = tx.nativeTransfers || [];
+      const sig = tx.signature;
+      const time = tx.timestamp; // unix seconds
+
+      // Burn: SUMMER leaving the dev wallet via a burn instruction.
+      const burned = tt
+        .filter((t) => t.mint === MINT && t.fromUserAccount === DEV &&
+          (t.toUserAccount == null || t.toUserAccount === "" || tx.type === "BURN"))
+        .reduce((s, t) => s + Number(t.tokenAmount || 0), 0);
+      if (tx.type === "BURN" && burned > 0) {
+        out.burnSummer += burned; out.burnCount += 1;
+        out.feed.push({ type: "burn", time, summer: Math.round(burned), sig });
+      }
 
       // Buyback: a SWAP where SUMMER lands in the dev wallet.
       if (tx.type === "SWAP") {
@@ -93,10 +102,9 @@ async function scanDevWallet() {
           .filter((t) => t.mint === MINT && t.toUserAccount === DEV)
           .reduce((s, t) => s + Number(t.tokenAmount || 0), 0);
         if (bought > 0) {
-          out.buybackSummer += bought;
-          out.buybackCount += 1;
-          const solIn = tx.events?.swap?.nativeInput?.amount;
-          if (solIn) out.buybackSol += Number(solIn) / 1e9;
+          const solIn = Number(tx.events?.swap?.nativeInput?.amount || 0) / 1e9;
+          out.buybackSummer += bought; out.buybackCount += 1; out.buybackSol += solIn;
+          out.feed.push({ type: "buyback", time, summer: Math.round(bought), sol: Number(solIn.toFixed(4)), sig });
         }
       }
 
@@ -107,14 +115,19 @@ async function scanDevWallet() {
       const toAnsemSol = nt
         .filter((t) => t.fromUserAccount === DEV && t.toUserAccount === ANSEM)
         .reduce((s, t) => s + Number(t.amount || 0) / 1e9, 0);
-      if (toAnsemSummer > 0) { out.ansemSummer += toAnsemSummer; out.ansemCount += 1; }
-      if (toAnsemSol > 0) out.ansemSol += toAnsemSol;
+      if (toAnsemSummer > 0 || toAnsemSol > 0) {
+        if (toAnsemSummer > 0) { out.ansemSummer += toAnsemSummer; out.ansemCount += 1; }
+        if (toAnsemSol > 0) out.ansemSol += toAnsemSol;
+        out.feed.push({ type: "ansem", time, summer: Math.round(toAnsemSummer), sol: Number(toAnsemSol.toFixed(4)), sig });
+      }
     }
 
     before = txns[txns.length - 1].signature;
     pages += 1;
     if (txns.length < 100) break;
   }
+
+  out.feed.sort((a, b) => (b.time || 0) - (a.time || 0));
   return out;
 }
 
@@ -146,6 +159,9 @@ async function main() {
     count: dev.ansemCount,
   } : (prev.ansem ?? { summer: 0, sol: 0, usd: 0, count: 0 });
 
+  // Keep the newest 40 events for the on-site activity feed.
+  const feed = dev && dev.feed.length ? dev.feed.slice(0, 40) : (prev.feed ?? []);
+
   const stats = {
     updatedAt: process.env.BUILD_TIME || new Date().toISOString(),
     price,
@@ -154,9 +170,11 @@ async function main() {
       amount: Math.round(burned),
       pct: Number(((burned / INITIAL_SUPPLY) * 100).toFixed(3)),
       usd: Number((burned * price).toFixed(2)),
+      count: dev && dev.burnCount ? dev.burnCount : (prev.burned?.count ?? 0),
     },
     buyback,
     ansem,
+    feed,
   };
 
   await writeFile(OUT, JSON.stringify(stats, null, 2) + "\n");
