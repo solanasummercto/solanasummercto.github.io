@@ -171,7 +171,12 @@
     border:2px solid rgba(255,158,0,.25);border-radius:22px;overflow:hidden}
   .feed-head{font-family:'Baloo 2';font-weight:800;color:var(--ink);padding:16px 20px;
     background:rgba(255,210,63,.35);font-size:1.05rem}
-  .feed-list{max-height:340px;overflow-y:auto}
+  .feed-tabs{display:flex;gap:8px;padding:12px 16px;flex-wrap:wrap;background:rgba(255,210,63,.15)}
+  .ftab{font-family:'Nunito';font-weight:900;font-size:.82rem;padding:7px 14px;border-radius:999px;cursor:pointer;
+    border:1.5px solid rgba(42,22,80,.15);background:#fff;color:var(--ink);transition:all .12s}
+  .ftab:hover{border-color:var(--sun-deep)}
+  .ftab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .feed-list{max-height:360px;overflow-y:auto}
   .feed-row{display:flex;align-items:center;gap:12px;padding:12px 20px;border-top:1px solid rgba(255,158,0,.18);
     text-decoration:none;color:var(--ink);transition:background .12s}
   .feed-row:hover{background:rgba(255,255,255,.7)}
@@ -334,9 +339,9 @@
       <div class="engine-live">
         <div class="elive burn">
           <div class="elive-ico">🔥</div>
-          <div class="elive-k">Total Burned</div>
+          <div class="elive-k">Burned by Dev</div>
           <div class="elive-v" id="enBurned">—</div>
-          <div class="elive-sub" id="enBurnedSub">of 1B supply</div>
+          <div class="elive-sub" id="enBurnedSub">bought &amp; burned</div>
         </div>
         <div class="elive buy">
           <div class="elive-ico">🟢</div>
@@ -356,6 +361,12 @@
       <!-- LIVE ACTIVITY FEED -->
       <div class="feed" id="engineFeed" hidden>
         <div class="feed-head">🌊 Live Activity — every buyback, burn &amp; transfer</div>
+        <div class="feed-tabs">
+          <button class="ftab active" data-f="all">All</button>
+          <button class="ftab" data-f="buyback">🟢 Buybacks</button>
+          <button class="ftab" data-f="burn">🔥 Burns</button>
+          <button class="ftab" data-f="ansem">🎁 Ansem</button>
+        </div>
         <div class="feed-list" id="feedList"></div>
       </div>
 
@@ -454,13 +465,6 @@
   setInterval(loadStats, 30000);
 
   // ---------- LIVE ENGINE: burns + buybacks + Ansem ----------
-  const MINT = "3AtR8x9UCzDYneRSx93pQLK5uFsr57iLbopMtHPEpump";
-  const INITIAL_SUPPLY = 1_000_000_000;
-  const RPCS = [
-    "https://api.mainnet-beta.solana.com",
-    "https://solana-rpc.publicnode.com"
-  ];
-
   const fmtToken = n => {
     n = Number(n);
     if(!isFinite(n)) return '—';
@@ -478,34 +482,15 @@
   };
   const setV = (id,val)=>{const el=document.getElementById(id);if(el){el.textContent=val;el.classList.remove('pending');}};
 
-  // Live burn straight from chain supply (works with zero backend).
-  async function liveBurn(){
-    for(const url of RPCS){
-      try{
-        const r = await fetch(url,{method:'POST',headers:{'content-type':'application/json'},
-          body:JSON.stringify({jsonrpc:'2.0',id:1,method:'getTokenSupply',params:[MINT]})});
-        const j = await r.json();
-        const supply = j.result?.value?.uiAmount;
-        if(supply==null) continue;
-        const burned = INITIAL_SUPPLY - supply;
-        setV('enBurned', fmtToken(burned)+' 🔥');
-        setV('enBurnedSub', (burned/INITIAL_SUPPLY*100).toFixed(2)+'% of supply gone');
-        return true;
-      }catch(e){/* try next rpc */}
-    }
-    return false;
-  }
-
-  // Buybacks + Ansem come from the cron-built stats.json.
+  // All engine numbers come from the Helius-built stats.json.
   async function engineStats(){
-    let burnedOk = await liveBurn();
     try{
       const res = await fetch('data/stats.json?t='+Math.floor(Date.now()/60000),{cache:'no-store'});
       if(!res.ok) throw 0;
       const s = await res.json();
-      if(!burnedOk && s.burned){
+      if(s.burned){
         setV('enBurned', fmtToken(s.burned.amount)+' 🔥');
-        setV('enBurnedSub', s.burned.pct.toFixed(2)+'% of supply gone');
+        setV('enBurnedSub', s.burned.count+' dev burn'+(s.burned.count===1?'':'s'));
       }
       if(s.buyback){
         setV('enBuy', fmtToken(s.buyback.summer));
@@ -518,12 +503,13 @@
         setV('enAnsem', fmtToken(s.ansem.summer));
         setV('enAnsemSub', 'across '+s.ansem.count+' transfer'+(s.ansem.count===1?'':'s'));
       }
-      renderFeed(s.feed);
+      ALL_FEED = Array.isArray(s.feed) ? s.feed : [];
+      renderFeed();
       const u = document.getElementById('enUpdated');
-      if(u && s.updatedAt) u.textContent = 'Live on-chain · updated '+ago(s.updatedAt);
+      if(u && s.updatedAt) u.textContent = 'Live on-chain via Helius · updated '+ago(s.updatedAt);
     }catch(e){
       const u = document.getElementById('enUpdated');
-      if(u) u.textContent = burnedOk ? 'Burn live from chain · buyback data syncing…' : 'Syncing on-chain data…';
+      if(u) u.textContent = 'Syncing on-chain data…';
     }
   }
   // Render the itemized activity feed.
@@ -532,16 +518,18 @@
     burn:    { ic:'🔥', label:'Burn',        cls:'burn',    sign:'−' },
     ansem:   { ic:'🎁', label:'Sent to Ansem', cls:'ansem', sign:'→' },
   };
-  function renderFeed(feed){
+  let ALL_FEED = [];
+  let FEED_FILTER = 'all';
+  function renderFeed(){
     const box = document.getElementById('engineFeed');
     const list = document.getElementById('feedList');
     if(!box || !list) return;
-    if(!Array.isArray(feed) || feed.length === 0){
-      box.hidden = false;
-      list.innerHTML = '<div class="feed-empty">Waiting for the next on-chain move… ☀️</div>';
+    box.hidden = false;
+    const feed = FEED_FILTER === 'all' ? ALL_FEED : ALL_FEED.filter(e => e.type === FEED_FILTER);
+    if(feed.length === 0){
+      list.innerHTML = '<div class="feed-empty">Nothing here yet… ☀️</div>';
       return;
     }
-    box.hidden = false;
     list.innerHTML = feed.map(ev => {
       const m = FEED_META[ev.type] || FEED_META.buyback;
       const amt = m.sign + fmtToken(ev.summer) + ' SUMMER';
@@ -554,6 +542,12 @@
       </a>`;
     }).join('');
   }
+  document.querySelectorAll('.ftab').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    FEED_FILTER = btn.dataset.f;
+    renderFeed();
+  }));
 
   engineStats();
   setInterval(engineStats, 60000);

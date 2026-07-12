@@ -14,6 +14,9 @@ const EVENTS = join(DATA, "events.json");
 const MINT = "3AtR8x9UCzDYneRSx93pQLK5uFsr57iLbopMtHPEpump";
 const INITIAL_SUPPLY = 1_000_000_000;
 const RPC = process.env.RPC_URL || "https://api.mainnet-beta.solana.com";
+// Count only dev-wallet burns from the start of the burn campaign (Jul 12, 2026 UTC).
+// Excludes older/unrelated burns by random holders.
+const BURN_SINCE = Math.floor(Date.parse("2026-07-12T00:00:00Z") / 1000);
 
 async function readJson(p, fallback) {
   try { return JSON.parse(await readFile(p, "utf8")); } catch { return fallback; }
@@ -52,20 +55,31 @@ async function main() {
   const [supply, price] = await Promise.all([getSupply().catch(() => null), getPrice()]);
   const prevStats = await readJson(STATS, {});
   const curSupply = supply ?? prevStats.supply ?? null;
-  const burnedTotal = curSupply != null ? INITIAL_SUPPLY - curSupply : (prevStats.burned?.amount ?? 0);
+
+  // Burned = dev-wallet burns since the campaign cutoff (not the raw supply delta).
+  const devBurns = events.filter((e) => e.type === "burn" && (e.time || 0) >= BURN_SINCE);
+  const burnedTotal = devBurns.reduce((s, e) => s + (e.summer || 0), 0);
 
   const buybackSummer = sum("buyback", "summer");
   const ansemSummer = sum("ansem", "summer");
+
+  // Feed always includes every burn + every Ansem transfer, plus the newest buybacks,
+  // so no burn is ever hidden below the cap.
+  const burnsE = events.filter((e) => e.type === "burn");
+  const ansemE = events.filter((e) => e.type === "ansem");
+  const buyE = events.filter((e) => e.type === "buyback").slice(0, 40);
+  const feed = [...burnsE, ...ansemE, ...buyE].sort((a, b) => (b.time || 0) - (a.time || 0));
 
   const stats = {
     updatedAt: process.env.BUILD_TIME || new Date().toISOString(),
     price,
     supply: curSupply,
+    burnedSince: BURN_SINCE,
     burned: {
       amount: Math.round(burnedTotal),
       pct: Number(((burnedTotal / INITIAL_SUPPLY) * 100).toFixed(3)),
       usd: Number((burnedTotal * price).toFixed(2)),
-      events: count("burn"),
+      count: devBurns.length,
     },
     buyback: {
       summer: Math.round(buybackSummer),
@@ -78,7 +92,7 @@ async function main() {
       usd: Number((ansemSummer * price).toFixed(2)),
       count: count("ansem"),
     },
-    feed: events.slice(0, 40),
+    feed,
   };
 
   await writeFile(EVENTS, JSON.stringify(events) + "\n");
