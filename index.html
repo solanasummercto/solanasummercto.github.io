@@ -509,7 +509,10 @@
       }
       if(s.buyback){
         setV('enBuy', fmtToken(s.buyback.summer));
-        setV('enBuySub', s.buyback.sol ? s.buyback.sol.toFixed(2)+' SOL spent' : 'bought & burned');
+        const parts = [];
+        if(s.buyback.count) parts.push(s.buyback.count+' buys');
+        if(s.buyback.sol) parts.push(s.buyback.sol.toFixed(2)+' SOL');
+        setV('enBuySub', parts.length ? parts.join(' · ') : 'bought & burned');
       }
       if(s.ansem){
         setV('enAnsem', fmtToken(s.ansem.summer));

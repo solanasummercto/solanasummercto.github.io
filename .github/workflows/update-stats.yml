@@ -28,15 +28,16 @@ jobs:
 
       - name: Build stats.json
         env:
-          HELIUS_API_KEY: ${{ secrets.HELIUS_API_KEY }}
+          # Optional: set an RPC_URL secret for a private/faster RPC. Falls back to public.
+          RPC_URL: ${{ secrets.RPC_URL }}
         run: node scripts/update-stats.mjs
 
       - name: Commit if changed
         run: |
           git config user.name "summer-stats-bot"
           git config user.email "bot@users.noreply.github.com"
-          if ! git diff --quiet -- data/stats.json; then
-            git add data/stats.json
+          git add data/stats.json data/events.json
+          if ! git diff --cached --quiet; then
             git commit -m "chore: refresh live stats [skip ci]"
             git push
           else
