@@ -482,35 +482,117 @@
   };
   const setV = (id,val)=>{const el=document.getElementById(id);if(el){el.textContent=val;el.classList.remove('pending');}};
 
-  // All engine numbers come from the Helius-built stats.json.
-  async function engineStats(){
+  // ===== Near-live engine: stats.json baseline + direct Helius polling =====
+  // Browser Helius key. Restrict it to your domains in the Helius dashboard
+  // (Access Control → allowed domains: perplana.com, solanasummer.perplana.com).
+  const HELIUS_KEY = "32f68aaf-6de8-4a71-8bc5-db436fa1d312";
+  const HELIUS_RPC = "https://mainnet.helius-rpc.com/?api-key=" + HELIUS_KEY;
+  const MINT = "3AtR8x9UCzDYneRSx93pQLK5uFsr57iLbopMtHPEpump";
+  const DEV = "BXrU6jcjtZnar27jfWCXXhr9EqQGcFvyfnpC9cRjYLmC";
+  const ANSEM = "GV6UUmNxz2RpKxmNAPadYKb7uQpszwqQAu3qLJxVdC52";
+  const BURN_SINCE = Math.floor(Date.parse("2026-07-12T00:00:00Z")/1000);
+
+  let baseline = null;                 // latest stats.json
+  let liveEvents = [];                 // events detected client-side (newer than baseline)
+  let DEV_ATA = null, ANSEM_ATA = null;
+  const seenSigs = new Set();
+
+  async function rpc(method, params){
+    const r = await fetch(HELIUS_RPC,{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});
+    const j = await r.json();
+    if(j.error) throw new Error(j.error.message);
+    return j.result;
+  }
+  const baseNewest = () => (baseline?.feed || []).reduce((m,e)=>Math.max(m,e.time||0),0);
+
+  function combined(){
+    const cut = baseNewest();
+    const live = liveEvents.filter(e => e.time > cut);      // not yet folded into baseline
+    const b = baseline || {burned:{amount:0,count:0},buyback:{summer:0,sol:0,count:0},ansem:{summer:0,count:0},feed:[]};
+    const of = t => live.filter(e => e.type === t);
+    const burnL = of('burn').filter(e => e.time >= BURN_SINCE);
+    const sumF = (a,f)=>a.reduce((s,e)=>s+(e[f]||0),0);
+    const totals = {
+      burned:  { amount: (b.burned?.amount||0) + sumF(burnL,'summer'), count: (b.burned?.count||0) + burnL.length },
+      buyback: { summer: (b.buyback?.summer||0) + sumF(of('buyback'),'summer'), sol: (b.buyback?.sol||0)+sumF(of('buyback'),'sol'), count: (b.buyback?.count||0) + of('buyback').length },
+      ansem:   { summer: (b.ansem?.summer||0) + sumF(of('ansem'),'summer'), count: (b.ansem?.count||0) + of('ansem').length },
+    };
+    const feed = [...live, ...(b.feed||[])].filter((e,i,a)=>a.findIndex(x=>x.sig===e.sig)===i).sort((a,b)=>(b.time||0)-(a.time||0));
+    return { totals, feed, live: live.length };
+  }
+
+  function renderAll(flash){
+    const c = combined();
+    setV('enBurned', fmtToken(c.totals.burned.amount)+' 🔥');
+    setV('enBurnedSub', c.totals.burned.count+' dev burn'+(c.totals.burned.count===1?'':'s'));
+    setV('enBuy', fmtToken(c.totals.buyback.summer));
+    const parts=[]; if(c.totals.buyback.count) parts.push(c.totals.buyback.count+' buys');
+    if(c.totals.buyback.sol) parts.push(c.totals.buyback.sol.toFixed(2)+' SOL');
+    setV('enBuySub', parts.length ? parts.join(' · ') : 'bought & burned');
+    setV('enAnsem', fmtToken(c.totals.ansem.summer));
+    setV('enAnsemSub', 'across '+c.totals.ansem.count+' transfer'+(c.totals.ansem.count===1?'':'s'));
+    ALL_FEED = c.feed;
+    renderFeed();
+    const u = document.getElementById('enUpdated');
+    if(u) u.textContent = c.live
+      ? '🟢 Real-time · '+c.live+' new event'+(c.live===1?'':'s')+' since last sync'
+      : 'Live on-chain via Helius · updated '+(baseline?.updatedAt ? ago(baseline.updatedAt) : 'just now');
+  }
+
+  async function loadBaseline(){
     try{
       const res = await fetch('data/stats.json?t='+Math.floor(Date.now()/60000),{cache:'no-store'});
-      if(!res.ok) throw 0;
-      const s = await res.json();
-      if(s.burned){
-        setV('enBurned', fmtToken(s.burned.amount)+' 🔥');
-        setV('enBurnedSub', s.burned.count+' dev burn'+(s.burned.count===1?'':'s'));
-      }
-      if(s.buyback){
-        setV('enBuy', fmtToken(s.buyback.summer));
-        const parts = [];
-        if(s.buyback.count) parts.push(s.buyback.count+' buys');
-        if(s.buyback.sol) parts.push(s.buyback.sol.toFixed(2)+' SOL');
-        setV('enBuySub', parts.length ? parts.join(' · ') : 'bought & burned');
-      }
-      if(s.ansem){
-        setV('enAnsem', fmtToken(s.ansem.summer));
-        setV('enAnsemSub', 'across '+s.ansem.count+' transfer'+(s.ansem.count===1?'':'s'));
-      }
-      ALL_FEED = Array.isArray(s.feed) ? s.feed : [];
-      renderFeed();
-      const u = document.getElementById('enUpdated');
-      if(u && s.updatedAt) u.textContent = 'Live on-chain via Helius · updated '+ago(s.updatedAt);
-    }catch(e){
-      const u = document.getElementById('enUpdated');
-      if(u) u.textContent = 'Syncing on-chain data…';
+      if(!res.ok) return;
+      baseline = await res.json();
+      (baseline.feed||[]).forEach(e => seenSigs.add(e.sig));
+      renderAll();
+    }catch(e){ const u=document.getElementById('enUpdated'); if(u&&!baseline) u.textContent='Syncing on-chain data…'; }
+  }
+  async function resolveATAs(){
+    try{
+      const [d,a] = await Promise.all([
+        rpc('getTokenAccountsByOwner',[DEV,{mint:MINT},{encoding:'jsonParsed'}]),
+        rpc('getTokenAccountsByOwner',[ANSEM,{mint:MINT},{encoding:'jsonParsed'}]),
+      ]);
+      DEV_ATA = d.value[0]?.pubkey || null;
+      ANSEM_ATA = a.value[0]?.pubkey || null;
+    }catch(e){}
+  }
+  const ownerBal = (list,o)=>{const e=(list||[]).find(b=>b.owner===o&&b.mint===MINT);return e?Number(e.uiTokenAmount.uiAmount||0):0;};
+  function burnAmt(tx){let t=0;const scan=ins=>(ins||[]).forEach(ix=>{const p=ix.parsed;if(p&&(p.type==='burn'||p.type==='burnChecked')&&p.info&&p.info.mint===MINT)t+=p.info.tokenAmount?Number(p.info.tokenAmount.uiAmount):Number(p.info.amount)/1e6;});scan(tx.transaction.message.instructions);(tx.meta?.innerInstructions||[]).forEach(ii=>scan(ii.instructions));return t;}
+  function devSol(tx){const keys=tx.transaction.message.accountKeys.map(k=>typeof k==='string'?k:k.pubkey);const i=keys.indexOf(DEV);if(i<0||!tx.meta)return 0;return (tx.meta.postBalances[i]-tx.meta.preBalances[i])/1e9;}
+  function classify(sig,tx){
+    const time=tx.blockTime, pre=tx.meta?.preTokenBalances, post=tx.meta?.postTokenBalances;
+    const dd=ownerBal(post,DEV)-ownerBal(pre,DEV), ad=ownerBal(post,ANSEM)-ownerBal(pre,ANSEM);
+    const burned=burnAmt(tx), sol=devSol(tx), evs=[];
+    if(burned>0.0001 && time>=BURN_SINCE) evs.push({type:'burn',time,summer:Math.round(burned),sig});
+    if(ad>0.0001) evs.push({type:'ansem',time,summer:Math.round(ad),sig});
+    if(dd>0.0001 && sol<-0.0005) evs.push({type:'buyback',time,summer:Math.round(dd),sol:Number((-sol).toFixed(4)),sig});
+    return evs;
+  }
+  async function poll(){
+    if(!DEV_ATA && !ANSEM_ATA) await resolveATAs();
+    const accts=[DEV_ATA,ANSEM_ATA].filter(Boolean);
+    if(!accts.length) return;
+    const cut=baseNewest(), fresh=[];
+    for(const acct of accts){
+      try{
+        const sigs=await rpc('getSignaturesForAddress',[acct,{limit:15}]);
+        for(const s of sigs){ if(!s.err && s.blockTime && s.blockTime>cut && !seenSigs.has(s.signature) && !fresh.includes(s.signature)) fresh.push(s.signature); }
+      }catch(e){}
     }
+    let changed=false;
+    for(const sig of fresh){
+      seenSigs.add(sig);
+      try{
+        const tx=await rpc('getTransaction',[sig,{maxSupportedTransactionVersion:0,encoding:'jsonParsed'}]);
+        if(!tx || tx.meta?.err) continue;
+        const evs=classify(sig,tx);
+        if(evs.length){ liveEvents.push(...evs); changed=true; }
+      }catch(e){}
+    }
+    if(changed) renderAll(true);
   }
   // Render the itemized activity feed.
   const FEED_META = {
@@ -549,8 +631,11 @@
     renderFeed();
   }));
 
-  engineStats();
-  setInterval(engineStats, 60000);
+  // boot: baseline now, resolve token accounts then start the 30s live poll
+  loadBaseline();
+  resolveATAs().then(poll);
+  setInterval(loadBaseline, 60000);   // refresh authoritative baseline
+  setInterval(poll, 30000);           // near-live: catch new events within ~30s
 </script>
 </body>
 </html>
