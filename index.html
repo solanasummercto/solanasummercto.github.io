@@ -203,6 +203,14 @@
   .fee-tag{display:inline-block;margin-top:16px;background:rgba(255,255,255,.22);border:1.5px solid rgba(255,255,255,.4);
     padding:6px 14px;border-radius:999px;font-weight:900;font-size:.82rem;letter-spacing:.3px}
 
+  /* TIMELINE / TWEETS */
+  .tweets{columns:1;column-gap:18px;max-width:1040px;margin:0 auto}
+  @media(min-width:640px){.tweets{columns:2}}
+  @media(min-width:1000px){.tweets{columns:3}}
+  .tweets .twitter-tweet{break-inside:avoid;margin:0 0 18px !important;display:inline-block;width:100%}
+  .tweets-fallback{text-align:center;color:#8a7aa5;font-weight:800;margin-top:14px}
+  .tweets-fallback.hidden{display:none}
+
   /* COMMUNITY */
   .community{text-align:center}
   .social-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:8px}
@@ -239,6 +247,7 @@
       <a class="txt" href="#chart">Chart</a>
       <a class="txt" href="#tokenomics">Tokenomics</a>
       <a class="txt" href="#fees">Fees</a>
+      <a class="txt" href="#timeline">Timeline</a>
       <a class="txt" href="#community">Community</a>
       <a class="btn btn-sun" href="#buy">Buy $SUMMER ☀️</a>
     </div>
@@ -384,6 +393,32 @@
           <span class="fee-tag">Reach &amp; culture</span>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE / X POSTS -->
+<section id="timeline">
+  <div class="wrap">
+    <div class="panel">
+      <h2 class="section-title">Word on the Timeline 𝕏</h2>
+      <p class="section-kicker">The whole timeline's feeling the summer ☀️</p>
+      <div class="tweets">
+        <blockquote class="twitter-tweet" data-theme="light" data-dnt="true"><a href="https://twitter.com/blknoiz06/status/2076311196022571480"></a></blockquote>
+        <blockquote class="twitter-tweet" data-theme="light" data-dnt="true"><a href="https://twitter.com/solana/status/2076311693563744419"></a></blockquote>
+        <blockquote class="twitter-tweet" data-theme="light" data-dnt="true"><a href="https://twitter.com/blknoiz06/status/2073826001906221418"></a></blockquote>
+        <blockquote class="twitter-tweet" data-theme="light" data-dnt="true"><a href="https://twitter.com/Raydium/status/2076356380349386825"></a></blockquote>
+        <blockquote class="twitter-tweet" data-theme="light" data-dnt="true"><a href="https://twitter.com/solana/status/2071675342373126543"></a></blockquote>
+        <blockquote class="twitter-tweet" data-theme="light" data-dnt="true"><a href="https://twitter.com/blknoiz06/status/2070649314649530481"></a></blockquote>
+        <blockquote class="twitter-tweet" data-theme="light" data-dnt="true"><a href="https://twitter.com/phantom/status/2072034959297266145"></a></blockquote>
+        <blockquote class="twitter-tweet" data-theme="light" data-dnt="true"><a href="https://twitter.com/toly/status/1539323183005933568"></a></blockquote>
+        <blockquote class="twitter-tweet" data-theme="light" data-dnt="true"><a href="https://twitter.com/solana/status/2052832671659958401"></a></blockquote>
+        <blockquote class="twitter-tweet" data-theme="light" data-dnt="true"><a href="https://twitter.com/mert/status/2063718566583484745"></a></blockquote>
+        <blockquote class="twitter-tweet" data-theme="light" data-dnt="true"><a href="https://twitter.com/phantom/status/2068449719823814782"></a></blockquote>
+        <blockquote class="twitter-tweet" data-theme="light" data-dnt="true"><a href="https://twitter.com/rajgokal/status/1922788688225763789"></a></blockquote>
+        <blockquote class="twitter-tweet" data-theme="light" data-dnt="true"><a href="https://twitter.com/SolJakey/status/2075036456310243750"></a></blockquote>
+      </div>
+      <p class="tweets-fallback" id="tweetsFallback">Loading posts from 𝕏…</p>
     </div>
   </div>
 </section>
@@ -630,6 +665,22 @@
     FEED_FILTER = btn.dataset.f;
     renderFeed();
   }));
+
+  // X (Twitter) embeds: load widget, hide the loading note once rendered
+  (function(){
+    const s = document.createElement('script');
+    s.src = 'https://platform.twitter.com/widgets.js';
+    s.async = true; s.charset = 'utf-8';
+    s.onload = function(){
+      const done = () => { const f=document.getElementById('tweetsFallback'); if(f) f.classList.add('hidden'); };
+      if(window.twttr && twttr.widgets && twttr.widgets.load){
+        twttr.widgets.load().then(done);
+        setTimeout(done, 4000);
+      } else { done(); }
+    };
+    s.onerror = function(){ const f=document.getElementById('tweetsFallback'); if(f) f.textContent='Couldn’t load posts — view them on 𝕏.'; };
+    document.body.appendChild(s);
+  })();
 
   // boot: baseline now, resolve token accounts then start the 30s live poll
   loadBaseline();
