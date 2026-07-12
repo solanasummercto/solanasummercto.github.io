@@ -151,6 +151,21 @@
   .tok .card .big{font-family:'Baloo 2';font-weight:800;font-size:2rem}
   .tok .card .lbl{font-weight:900;opacity:.9;margin-top:4px}
 
+  /* CREATOR FEES — LIVE TILES */
+  .engine-live{display:grid;grid-template-columns:1fr;gap:16px;max-width:860px;margin:0 auto 14px}
+  @media(min-width:640px){.engine-live{grid-template-columns:repeat(3,1fr)}}
+  .elive{border-radius:22px;padding:24px 18px;text-align:center;color:#fff;position:relative;box-shadow:var(--shadow)}
+  .elive.burn{background:linear-gradient(150deg,#ff8a3d,#ff4d4d)}
+  .elive.buy{background:linear-gradient(150deg,#2fd07a,#0a9d6a)}
+  .elive.gift{background:linear-gradient(150deg,#ff8a5b,#ff4d8d)}
+  .elive-ico{font-size:2rem;line-height:1}
+  .elive-k{font-weight:900;text-transform:uppercase;letter-spacing:.6px;font-size:.78rem;opacity:.95;margin-top:6px}
+  .elive-v{font-family:'Baloo 2';font-weight:800;font-size:1.9rem;margin-top:6px;line-height:1.05;transition:opacity .3s}
+  .elive-v.pending{opacity:.55}
+  .elive-sub{font-size:.82rem;opacity:.92;margin-top:2px;font-weight:700}
+  .engine-updated{text-align:center;color:#8a7aa5;font-weight:800;font-size:.82rem;margin:0 auto 30px}
+  .engine-updated .live-dot{vertical-align:middle}
+
   /* CREATOR FEES */
   .fees{display:grid;grid-template-columns:1fr;gap:20px;max-width:860px;margin:0 auto}
   @media(min-width:720px){.fees{grid-template-columns:repeat(2,1fr)}}
@@ -292,9 +307,33 @@
     <div class="panel">
       <h2 class="section-title">The Summer Engine 🔥</h2>
       <p class="section-kicker">Where the creator fees go</p>
-      <p style="text-align:center;color:#5a4a72;max-width:640px;margin:0 auto 30px">
-        The creator fees from $SUMMER don't sit in a wallet — they're put straight back to work for the community. Two ways:
+      <p style="text-align:center;color:#5a4a72;max-width:640px;margin:0 auto 26px">
+        The creator fees from $SUMMER don't sit in a wallet — they're put straight back to work for the community. Every number below is pulled live from the Solana blockchain.
       </p>
+
+      <!-- LIVE ON-CHAIN TILES -->
+      <div class="engine-live">
+        <div class="elive burn">
+          <div class="elive-ico">🔥</div>
+          <div class="elive-k">Total Burned</div>
+          <div class="elive-v" id="enBurned">—</div>
+          <div class="elive-sub" id="enBurnedSub">of 1B supply</div>
+        </div>
+        <div class="elive buy">
+          <div class="elive-ico">🟢</div>
+          <div class="elive-k">Dev Buybacks</div>
+          <div class="elive-v" id="enBuy">—</div>
+          <div class="elive-sub" id="enBuySub">bought &amp; burned</div>
+        </div>
+        <div class="elive gift">
+          <div class="elive-ico">🎁</div>
+          <div class="elive-k">Sent to Ansem</div>
+          <div class="elive-v" id="enAnsem">—</div>
+          <div class="elive-sub" id="enAnsemSub">for reach</div>
+        </div>
+      </div>
+      <p class="engine-updated"><span class="live-dot"></span><span id="enUpdated">syncing on-chain data…</span></p>
+
       <div class="fees">
         <div class="fee-card burn">
           <div class="fee-ico">🔥</div>
@@ -388,6 +427,78 @@
   }
   loadStats();
   setInterval(loadStats, 30000);
+
+  // ---------- LIVE ENGINE: burns + buybacks + Ansem ----------
+  const MINT = "3AtR8x9UCzDYneRSx93pQLK5uFsr57iLbopMtHPEpump";
+  const INITIAL_SUPPLY = 1_000_000_000;
+  const RPCS = [
+    "https://api.mainnet-beta.solana.com",
+    "https://solana-rpc.publicnode.com"
+  ];
+
+  const fmtToken = n => {
+    n = Number(n);
+    if(!isFinite(n)) return '—';
+    if(n >= 1e9) return (n/1e9).toFixed(2)+'B';
+    if(n >= 1e6) return (n/1e6).toFixed(2)+'M';
+    if(n >= 1e3) return (n/1e3).toFixed(1)+'K';
+    return Math.round(n).toLocaleString();
+  };
+  const ago = iso => {
+    const s = Math.max(0,(Date.now()-new Date(iso).getTime())/1000);
+    if(s < 90) return 'just now';
+    if(s < 3600) return Math.round(s/60)+'m ago';
+    if(s < 86400) return Math.round(s/3600)+'h ago';
+    return Math.round(s/86400)+'d ago';
+  };
+  const setV = (id,val)=>{const el=document.getElementById(id);if(el){el.textContent=val;el.classList.remove('pending');}};
+
+  // Live burn straight from chain supply (works with zero backend).
+  async function liveBurn(){
+    for(const url of RPCS){
+      try{
+        const r = await fetch(url,{method:'POST',headers:{'content-type':'application/json'},
+          body:JSON.stringify({jsonrpc:'2.0',id:1,method:'getTokenSupply',params:[MINT]})});
+        const j = await r.json();
+        const supply = j.result?.value?.uiAmount;
+        if(supply==null) continue;
+        const burned = INITIAL_SUPPLY - supply;
+        setV('enBurned', fmtToken(burned)+' 🔥');
+        setV('enBurnedSub', (burned/INITIAL_SUPPLY*100).toFixed(2)+'% of supply gone');
+        return true;
+      }catch(e){/* try next rpc */}
+    }
+    return false;
+  }
+
+  // Buybacks + Ansem come from the cron-built stats.json.
+  async function engineStats(){
+    let burnedOk = await liveBurn();
+    try{
+      const res = await fetch('data/stats.json?t='+Math.floor(Date.now()/60000),{cache:'no-store'});
+      if(!res.ok) throw 0;
+      const s = await res.json();
+      if(!burnedOk && s.burned){
+        setV('enBurned', fmtToken(s.burned.amount)+' 🔥');
+        setV('enBurnedSub', s.burned.pct.toFixed(2)+'% of supply gone');
+      }
+      if(s.buyback){
+        setV('enBuy', fmtToken(s.buyback.summer));
+        setV('enBuySub', s.buyback.sol ? s.buyback.sol.toFixed(2)+' SOL spent' : 'bought & burned');
+      }
+      if(s.ansem){
+        setV('enAnsem', fmtToken(s.ansem.summer));
+        setV('enAnsemSub', 'across '+s.ansem.count+' transfer'+(s.ansem.count===1?'':'s'));
+      }
+      const u = document.getElementById('enUpdated');
+      if(u && s.updatedAt) u.textContent = 'Live on-chain · updated '+ago(s.updatedAt);
+    }catch(e){
+      const u = document.getElementById('enUpdated');
+      if(u) u.textContent = burnedOk ? 'Burn live from chain · buyback data syncing…' : 'Syncing on-chain data…';
+    }
+  }
+  engineStats();
+  setInterval(engineStats, 60000);
 </script>
 </body>
 </html>

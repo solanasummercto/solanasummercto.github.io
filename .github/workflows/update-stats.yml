@@ -1,0 +1,44 @@
+name: Update live stats
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # every 15 minutes
+  workflow_dispatch:            # allow manual runs from the Actions tab
+  push:
+    paths:
+      - "scripts/update-stats.mjs"
+      - ".github/workflows/update-stats.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-stats
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build stats.json
+        env:
+          HELIUS_API_KEY: ${{ secrets.HELIUS_API_KEY }}
+        run: node scripts/update-stats.mjs
+
+      - name: Commit if changed
+        run: |
+          git config user.name "summer-stats-bot"
+          git config user.email "bot@users.noreply.github.com"
+          if ! git diff --quiet -- data/stats.json; then
+            git add data/stats.json
+            git commit -m "chore: refresh live stats [skip ci]"
+            git push
+          else
+            echo "No change in stats."
+          fi
