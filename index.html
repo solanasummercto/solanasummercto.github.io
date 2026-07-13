@@ -617,7 +617,7 @@
     const cut=baseNewest(), fresh=[];
     for(const acct of accts){
       try{
-        const sigs=await rpc('getSignaturesForAddress',[acct,{limit:15}]);
+        const sigs=await rpc('getSignaturesForAddress',[acct,{limit:50}]);
         for(const s of sigs){ if(!s.err && s.blockTime && s.blockTime>cut && !seenSigs.has(s.signature) && !fresh.includes(s.signature)) fresh.push(s.signature); }
       }catch(e){}
     }
