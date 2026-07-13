@@ -1,26 +1,46 @@
 {
-  "updatedAt": "2026-07-13T11:44:37.999Z",
-  "price": 0.000004805,
-  "supply": 995092032.713297,
+  "updatedAt": "2026-07-13T18:18:59.200Z",
+  "price": 0.000004746,
+  "supply": 995089906.199015,
   "burnedSince": 1783814400,
   "burned": {
     "amount": 4397251,
     "pct": 0.44,
-    "usd": 21.13,
+    "usd": 20.87,
     "count": 3
   },
   "buyback": {
-    "summer": 16372645,
-    "sol": 1.6882,
-    "usd": 78.67,
-    "count": 46
+    "summer": 16899357,
+    "sol": 1.7323,
+    "usd": 80.2,
+    "count": 48
   },
   "ansem": {
-    "summer": 10672344,
-    "usd": 51.28,
-    "count": 10
+    "summer": 11353197,
+    "usd": 53.88,
+    "count": 11
   },
   "feed": [
+    {
+      "type": "buyback",
+      "time": 1783958249,
+      "summer": 390853,
+      "sol": 0.0331,
+      "sig": "3YNgULXsUxH5R4Wrfo9facrTSQtxLVLCu5ZaACpW1DWme3VvxT86XKtgYYKk4Eqk4VxUd3r6r9tbzoE85EFPtfFp"
+    },
+    {
+      "type": "ansem",
+      "time": 1783949148,
+      "summer": 680853,
+      "sig": "MW2MRHzfxr2cuvjDPdgi3DwmbJAGKaaopSo2Bmn5nNqv3Ys4Xor63MTBR4USpxqaJZA8eVS1hE5TxmGZab1rNgQ"
+    },
+    {
+      "type": "buyback",
+      "time": 1783949117,
+      "summer": 135859,
+      "sol": 0.011,
+      "sig": "2vMGUg4nhGDkzKbQNK6dBaAsUmRPSq5ceqbthU3eDqzHtEoTBJ1hJLUYKNmJ473NgHboKjBMG3iyRGJBB8pM55if"
+    },
     {
       "type": "buyback",
       "time": 1783940957,
@@ -348,24 +368,10 @@
       "sig": "2i866UEqmDFcbSEFxY1JZ7kgTDV9LS2UxSnJL3wFsfvNtuRpUdUkdEjbDH4k96Po4nKgsJVjozJyFBQ6skoLQCnA"
     },
     {
-      "type": "buyback",
-      "time": 1783875283,
-      "summer": 633425,
-      "sol": 0.0569,
-      "sig": "5S1Nn8G4VeQS7pCTG9ewBEZroJYa2962pd4Zhk2LAb7MPD3VcWzVSLrckJXRXG7fiPdJSztBixSMZXU85aiqFoLm"
-    },
-    {
       "type": "burn",
       "time": 1783874791,
       "summer": 868817,
       "sig": "2EWYfS2iqFM2H5jsUfKXKk5YDrETUS79VhFCMZ2hGhRdQXvWNHMgqz4yjjGpTz5nLyZm14nU6n5EUhWMEEJaLqbs"
-    },
-    {
-      "type": "buyback",
-      "time": 1783874776,
-      "summer": 868817,
-      "sol": 0.0879,
-      "sig": "4jCR8XczbDH5qbNsGNpbNH38f76yfPaUSw5gP8uCQzDCELVtnm9EA3GMVDDDUNJGTTnqwDN1dejAUrTEagVpJs41"
     },
     {
       "type": "burn",
