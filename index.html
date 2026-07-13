@@ -703,9 +703,13 @@
   }
   document.getElementById('enRefresh')?.addEventListener('click', manualRefresh);
 
-  // boot: load the free GitHub baseline only. No Helius calls until Refresh is tapped.
-  loadBaseline();
-  setInterval(loadBaseline, 60000);   // baseline auto-updates every 15 min via the Action (free)
+  // boot: paint the free baseline instantly, then ONE live Helius check on load
+  // (fresh on every page refresh — but no continuous polling, so credits stay low).
+  (async () => {
+    await loadBaseline();
+    try { if(!DEV_ATA && !ANSEM_ATA) await resolveATAs(); await poll(); } catch(e){}
+  })();
+  setInterval(loadBaseline, 60000);   // keep baseline current from the Action (free)
 </script>
 </body>
 </html>
