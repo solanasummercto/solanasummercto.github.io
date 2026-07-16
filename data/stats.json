@@ -1,26 +1,33 @@
 {
-  "updatedAt": "2026-07-16T13:05:32.315Z",
-  "price": 0.000004238,
+  "updatedAt": "2026-07-16T17:48:21.442Z",
+  "price": 0.00000435,
   "supply": 995074580.634291,
   "burnedSince": 1783814400,
   "burned": {
     "amount": 4397251,
     "pct": 0.44,
-    "usd": 18.64,
+    "usd": 19.13,
     "count": 3
   },
   "buyback": {
-    "summer": 23866103,
-    "sol": 2.1507,
-    "usd": 101.14,
-    "count": 53
+    "summer": 25945561,
+    "sol": 2.2704,
+    "usd": 112.86,
+    "count": 54
   },
   "ansem": {
     "summer": 18710797,
-    "usd": 79.3,
+    "usd": 81.39,
     "count": 13
   },
   "feed": [
+    {
+      "type": "buyback",
+      "time": 1784214000,
+      "summer": 2079458,
+      "sol": 0.1197,
+      "sig": "bgmbjAQ18h7ZZsVfrZFRtPV4L9KLv8P4UoywjutmnG54bLiYWs3R4a8amDfyLRec6Ypps2gsT86bNYiAwUQ7fVW"
+    },
     {
       "type": "ansem",
       "time": 1784131394,
@@ -365,13 +372,6 @@
       "summer": 405543,
       "sol": 0.0906,
       "sig": "3vjBbJGxMmyXe1QJ7rRn4J39ecm1A3TnJiEV79EUituC4qtqXzSRfQMvzbqhegphvF5hj9B8UhTm12hp6WSWPCuD"
-    },
-    {
-      "type": "buyback",
-      "time": 1783876865,
-      "summer": 77789,
-      "sol": 0.0178,
-      "sig": "5ALLYDshuHXShJWof25RacbFS94GAcSpaGgH8JRLjYdYG6KtWbeqoiWDryzEWa3E8PVNV3e8QykLwxscDLpwjf3i"
     },
     {
       "type": "ansem",
