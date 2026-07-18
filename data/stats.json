@@ -1,26 +1,106 @@
 {
-  "updatedAt": "2026-07-18T06:30:45.712Z",
-  "price": 0.000005726,
-  "supply": 995074580.634291,
+  "updatedAt": "2026-07-18T10:48:56.969Z",
+  "price": 0.000009426,
+  "supply": 995074580.63429,
   "burnedSince": 1783814400,
   "burned": {
     "amount": 4397251,
     "pct": 0.44,
-    "usd": 25.18,
+    "usd": 41.45,
     "count": 3
   },
   "buyback": {
-    "summer": 29925395,
-    "sol": 2.5683,
-    "usd": 171.35,
-    "count": 58
+    "summer": 33932853,
+    "sol": 3.0856,
+    "usd": 319.85,
+    "count": 66
   },
   "ansem": {
-    "summer": 23176480,
-    "usd": 132.71,
-    "count": 15
+    "summer": 28777546,
+    "usd": 271.26,
+    "count": 19
   },
   "feed": [
+    {
+      "type": "ansem",
+      "time": 1784370769,
+      "summer": 979634,
+      "sig": "bmXQgEA5dGtRcm2CBuU4d5qppuBf9XCrDiYu66Ec2tuBxkUW4cFurtNimDttiTZxCYcvMhhtP6GK8ER3UNFJ5ES"
+    },
+    {
+      "type": "buyback",
+      "time": 1784370599,
+      "summer": 174868,
+      "sol": 0.0221,
+      "sig": "45GPrYbh1skTFLbHW1foET2uvMNhFkjWXZc2gmKNARxQbeQAyKALx4PzBfFT2CqbNTLLvf8MjQZZgzFJSQZ1FVtX"
+    },
+    {
+      "type": "buyback",
+      "time": 1784368839,
+      "summer": 305540,
+      "sol": 0.0454,
+      "sig": "5Usy1K3djgQQWmR7KPfwXnLPEF1yd82JbyNJZ4B7Z8EQU94Z1Xy45jc3SB5mGdipge2Fxk1eD8wJdS4UCM3jrN1L"
+    },
+    {
+      "type": "buyback",
+      "time": 1784365594,
+      "summer": 279624,
+      "sol": 0.0401,
+      "sig": "2GRMipnuRo2Q995ZBRrUaQgpsyFaZ6wmBc3LnJdoFkR12hNoKn9dZDcySHZpzfNjGfyDYuZsL6pseVRp6i9vtaQi"
+    },
+    {
+      "type": "buyback",
+      "time": 1784365198,
+      "summer": 219602,
+      "sol": 0.0305,
+      "sig": "3TEscSed9Nkm9n6tFw4yYNjNcthtQz6CopbbmzTWoPcJv32ZgKDEQ6CpAQb2qqyu1DjBLJWCzB5UjvaPXzZD5SXX"
+    },
+    {
+      "type": "ansem",
+      "time": 1784364320,
+      "summer": 1101893,
+      "sig": "3Xk6V3Fr5DRQ9YQnfPSMrHRjma6ibgASjg8wVGbC3R4faww329XoVWbYFfk5o3UwzQVUeNAGrUPRcvfKSPK41Nxk"
+    },
+    {
+      "type": "buyback",
+      "time": 1784364275,
+      "summer": 295612,
+      "sol": 0.0429,
+      "sig": "3X5zPHHjgX5yvusoMCF9nHNScprmvhShefzs2Fxc9rJ1m7VzZLw4XsBMppMH5huh147nJ7uTYAcK4gNXYrCA2cWy"
+    },
+    {
+      "type": "buyback",
+      "time": 1784363765,
+      "summer": 806282,
+      "sol": 0.1066,
+      "sig": "2Az8eCCCqBE43gwThfi998qMv1Upd7aRjBPyLHeDgMzjFt3EvbMe2691yDtSpVsvj4u5j2tW5B1yb3mPU1hhao2t"
+    },
+    {
+      "type": "ansem",
+      "time": 1784363077,
+      "summer": 1641728,
+      "sig": "42H98Vm7JJXFMtNwDCtqqyFgyrGxQ3uJCmc9GQR4odDiCuCCXJjmdkG7yQ6vknfmp2ZvakuKbuvbHMd6kY7ymbq6"
+    },
+    {
+      "type": "buyback",
+      "time": 1784363051,
+      "summer": 1641728,
+      "sol": 0.2054,
+      "sig": "x93NXWa3xXR7cS1ctQfSzUqvfw5W8mFGyoNrcouS6jPcARVENGJHKGJrZG5AQ93EhXbCX1Zu1uW29VbiCWXMvKc"
+    },
+    {
+      "type": "ansem",
+      "time": 1784358933,
+      "summer": 1877811,
+      "sig": "2mrhRW48FCvyzE66z6b9EVDX3n7gAyqCts2UHKXLSJQEtFhCdgUZ5BbSTh4uwTkmxG1UbTnnsUqCnjkAVzwCUZtB"
+    },
+    {
+      "type": "buyback",
+      "time": 1784358612,
+      "summer": 284202,
+      "sol": 0.0243,
+      "sig": "4iuY357JgGXy8fjN2nxyEnpSPz7TPFUcMxKEkoNpjgbW3MJ9naFcAppzonno9YEiKgC2nZxjBqsJJnnMYDzzjLEh"
+    },
     {
       "type": "buyback",
       "time": 1784317713,
@@ -318,66 +398,10 @@
       "sig": "44WBCoUwiShuvW8Y9Y7H49cVPEUwo1yrRbNrcJ9Ha8HFZjZMDte4vYuHpxfUK6VDk3QHr6ggjHH8j6CzaxAt3aEQ"
     },
     {
-      "type": "buyback",
-      "time": 1783878877,
-      "summer": 368690,
-      "sol": 0.0464,
-      "sig": "4QqdbPJgBtYR6j3tvCTGjXnecBKq2WtG2qAuNvqva8dfykjNZUX211Mpst8Gr6twQEUDgfrcBWYo2ZfeF5xidLtz"
-    },
-    {
-      "type": "buyback",
-      "time": 1783878718,
-      "summer": 154897,
-      "sol": 0.021,
-      "sig": "xCgmDrnQhxzJJWNpP3m68bpHUxNph9iUqoP1Wk9mDVJb9b6GLpgmGsmpNYjJ4wS4eGjD63BoN3xWGWwZiURnbaV"
-    },
-    {
-      "type": "buyback",
-      "time": 1783878632,
-      "summer": 232517,
-      "sol": 0.0261,
-      "sig": "4ZBrsE16jt1icGCNefDzoyFBrD5CZzhbeexXEPEbUn9tsC88vfCj9q4Cp6JUUxsfc1fvNwZbL8MzqTqxBp9bSZpW"
-    },
-    {
       "type": "ansem",
       "time": 1783878496,
       "summer": 1216671,
       "sig": "4PGc6ndsbbLyie9D3ty3WT1QmDtKYDA7vWQS2d42oyHztEZf2AG5ALZeaajnJFQ39jVUvV8fQwDzxT6LMECGjSbs"
-    },
-    {
-      "type": "buyback",
-      "time": 1783878464,
-      "summer": 268649,
-      "sol": 0.0269,
-      "sig": "2rvTZPFBB7Dr2NPcXNJ5aihsqm4pdSDhJ8Qf4fU3YMotYsCVXX1ez1BxS2uVyjvSjNAgPkVk3UAgb3Zy68g9eeT2"
-    },
-    {
-      "type": "buyback",
-      "time": 1783878253,
-      "summer": 206328,
-      "sol": 0.0258,
-      "sig": "4vBKc9qpMdZxvfebrsBbtCukeLjGFM7cCrYvbYXGzREAVa98xs1AAi4BiZfAqy5d1nEbhKU5U6fP3Ec3mf1dcmCh"
-    },
-    {
-      "type": "buyback",
-      "time": 1783878138,
-      "summer": 301471,
-      "sol": 0.0396,
-      "sig": "3xmK7k1wBZCz2Pon6ZBxQmpmh1HFCgwSjuAVLTCdEkLJYacAhThSqSDtdUqan9E7RGNErjqp3Phg2aYcpAUfSoMR"
-    },
-    {
-      "type": "buyback",
-      "time": 1783877913,
-      "summer": 156717,
-      "sol": 0.0282,
-      "sig": "5dN4HjGRArDF3iP7roHmsnhbMNX7BS5KTAAMMRSenu5WqZYruEYKUhRhuupQAWx3MZHso61r1KcSkS9w6b8beSFK"
-    },
-    {
-      "type": "buyback",
-      "time": 1783877809,
-      "summer": 165196,
-      "sol": 0.0358,
-      "sig": "5dfWt9Medr5DXyLS7LbGmrESnZnx7JXSjhF7bKdQK8tiLYL5ficb9o6CdCCjbQPddHTp5YW4coJ9Jag2Ejvjjh1J"
     },
     {
       "type": "ansem",
