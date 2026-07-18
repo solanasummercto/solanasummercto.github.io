@@ -1,26 +1,60 @@
 {
-  "updatedAt": "2026-07-18T14:37:09.711Z",
-  "price": 0.000009199,
+  "updatedAt": "2026-07-18T17:43:20.009Z",
+  "price": 0.000008815,
   "supply": 995074580.63429,
   "burnedSince": 1783814400,
   "burned": {
     "amount": 4397251,
     "pct": 0.44,
-    "usd": 40.45,
+    "usd": 38.76,
     "count": 3
   },
   "buyback": {
-    "summer": 34641854,
-    "sol": 3.1788,
-    "usd": 318.67,
-    "count": 69
+    "summer": 35306935,
+    "sol": 3.2613,
+    "usd": 311.23,
+    "count": 73
   },
   "ansem": {
-    "summer": 29486548,
-    "usd": 271.25,
-    "count": 20
+    "summer": 30151628,
+    "usd": 265.79,
+    "count": 21
   },
   "feed": [
+    {
+      "type": "ansem",
+      "time": 1784395425,
+      "summer": 665080,
+      "sig": "kUNETm3cKUeKCajKpvBaankEgBYBsdfqtxgmHavssBpEpE8Fz9cKKiXPauUZrNwvPCGPHeKjcqFDm9vXBTfWUes"
+    },
+    {
+      "type": "buyback",
+      "time": 1784394423,
+      "summer": 264709,
+      "sol": 0.0322,
+      "sig": "YyVvjvqYWmqWX1YFGarASVJqkAfp3DQn3VhaDjh5kqKw6kAr3i1aYbWECLWb2SvjGMQ7eNp4MZy8G1znqnWY2tN"
+    },
+    {
+      "type": "buyback",
+      "time": 1784387979,
+      "summer": 118453,
+      "sol": 0.0158,
+      "sig": "5ScPmYs5igajtg9zT2C8auwNTTMAXxTsHFShXL8RFqYbLEgvVnc8GkCNYEPCoAk4PXWTJb8y6EvwbxnmqyQkQgDj"
+    },
+    {
+      "type": "buyback",
+      "time": 1784387106,
+      "summer": 144566,
+      "sol": 0.0168,
+      "sig": "4NE5VGpwpJSAuyfsgzcxWyLjAB6k1iNo9Ssa298R6ssHyDYkStvDM8fEAxYd5qWRNPei1R4q72dBNcj7SbZvuuhu"
+    },
+    {
+      "type": "buyback",
+      "time": 1784385837,
+      "summer": 137353,
+      "sol": 0.0177,
+      "sig": "3GGwfieDt6UGefYX5P9CgSuQgtQg9yjHiuwgEPtStamLM3UYiWmERzb9Hcavb2NWdVkSjG13RohU8izAgct7P4xw"
+    },
     {
       "type": "ansem",
       "time": 1784385286,
@@ -358,13 +392,6 @@
       "sig": "27yU1HUvBw1QzE2zemjoipGFi4rssroKBmVmJwict5U3G61TT9X8oFM43DogDaXALya4X8iVLekLajo9cwDeFbQF"
     },
     {
-      "type": "buyback",
-      "time": 1783882726,
-      "summer": 432166,
-      "sol": 0.0356,
-      "sig": "2U4qt9xBQ3R44osqNsFXahjMXTdbe8cdNQrMbW2VrfBfNErqcQTB8ikJGTAcwExCfJbmb88cEVumEgxAVJ7GiD9p"
-    },
-    {
       "type": "ansem",
       "time": 1783882514,
       "summer": 500000,
@@ -375,27 +402,6 @@
       "time": 1783882257,
       "summer": 1000000,
       "sig": "2WrezkZkgLeHwpmdWV77uq9SDDCpJ2m7z4A1Z7EZT4cQV6Mf35wHfdbJiKUEzZpgot8cwuRgswwcVAa6RA5mkFka"
-    },
-    {
-      "type": "buyback",
-      "time": 1783881864,
-      "summer": 240827,
-      "sol": 0.028,
-      "sig": "287L5jnjUDyR5yi5TmsTJ7SQiGa9z7YiNew7728s955smiSJUD5xMxt8wjNXfgPHnLHHa561z8h9xidPfR2HpZ7m"
-    },
-    {
-      "type": "buyback",
-      "time": 1783880945,
-      "summer": 113978,
-      "sol": 0.0165,
-      "sig": "Rk7aVBUSp9qMqhGaTnjoqYozi5vi7frro48dnKgpWebwJCB6dnssVaKq32SvgKFAeECDM8qhCzfcn6JPk1fbzGs"
-    },
-    {
-      "type": "buyback",
-      "time": 1783879982,
-      "summer": 85335,
-      "sol": 0.0127,
-      "sig": "46Pu8WcVNfjefvcmdcX4gv3s8MVhULxxxLVFXtaWcX8AQGp46VTcAWNRxTGbM57ZkPZsD3MfDcQDQabwP8QqyV1r"
     },
     {
       "type": "ansem",
