@@ -1,26 +1,47 @@
 {
-  "updatedAt": "2026-07-18T22:34:09.865Z",
-  "price": 0.000008508,
+  "updatedAt": "2026-07-19T07:38:02.582Z",
+  "price": 0.000008622,
   "supply": 995074580.63429,
   "burnedSince": 1783814400,
   "burned": {
     "amount": 4397251,
     "pct": 0.44,
-    "usd": 37.41,
+    "usd": 37.91,
     "count": 3
   },
   "buyback": {
-    "summer": 35421702,
-    "sol": 3.277,
-    "usd": 301.37,
-    "count": 74
+    "summer": 36693503,
+    "sol": 3.4309,
+    "usd": 316.37,
+    "count": 77
   },
   "ansem": {
     "summer": 30151628,
-    "usd": 256.53,
+    "usd": 259.97,
     "count": 21
   },
   "feed": [
+    {
+      "type": "buyback",
+      "time": 1784426647,
+      "summer": 198590,
+      "sol": 0.0261,
+      "sig": "5z787jbqe9cSv7Z5niJyJ8iosoEbFeKbB5JmayPWrPe23yAeaBjWVKx7Lq6Xg5hCx93BHLBRUHYoY2JSPTDwm3sg"
+    },
+    {
+      "type": "buyback",
+      "time": 1784425461,
+      "summer": 515739,
+      "sol": 0.0653,
+      "sig": "B4VJj1ybU21eEmW6B7fgyJyipLrHLQyxxja1g7Ln3RY97vLQwZVZ7EPv2EgUZ3mgudWfqp6vVVAZf9TjcNCAn8g"
+    },
+    {
+      "type": "buyback",
+      "time": 1784421631,
+      "summer": 557472,
+      "sol": 0.0625,
+      "sig": "4giNJgjTjrex2W5hS7RaBZi6WcfoReCxxSiNNQmB3na7pRLz3842cpnCzjpRqddymBcsWLTgqRDRfCBUy6u6akHi"
+    },
     {
       "type": "buyback",
       "time": 1784406421,
@@ -363,27 +384,6 @@
       "summer": 584429,
       "sol": 0.067,
       "sig": "58XaqfgLL8AH653CJhu4s6GPmrMP8JMHWPgNJNoe4YTZwo1ZfD8axKpUc2bS7g7Cv5JQibmpNdfEyZLWMEPShAcC"
-    },
-    {
-      "type": "buyback",
-      "time": 1783887546,
-      "summer": 93864,
-      "sol": 0.0071,
-      "sig": "yX7gWjpkqEJcRCbMCJHqSN1mg1hokgBMNcwtj16cU2zzM5RDgyhWPdzjKv4xGJVqFmvUAvNozmAYsdW2HQKXLp2"
-    },
-    {
-      "type": "buyback",
-      "time": 1783886989,
-      "summer": 134795,
-      "sol": 0.0104,
-      "sig": "63U9vws245WYA6E1sbKK5w74xWgbQufm3jDaRXe1BgwpM8uWpX7j9ifBR5se5QgHkzHy7J8Jn2qgTdhrFxSzu8P2"
-    },
-    {
-      "type": "buyback",
-      "time": 1783884969,
-      "summer": 63630,
-      "sol": 0.0065,
-      "sig": "3xMcfjS2iVt314YgTeiSk393gvF7hwLCTQzLXBKTMmdHQkKjFiLk5VLrUFgrafnDBSTu1ASX3z8GDz9vEnyafhCp"
     },
     {
       "type": "ansem",
