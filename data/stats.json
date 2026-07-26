@@ -1,26 +1,46 @@
 {
-  "updatedAt": "2026-07-26T11:47:40.465Z",
-  "price": 0.000008839,
-  "supply": 993618003.140806,
+  "updatedAt": "2026-07-26T15:45:06.094Z",
+  "price": 0.000008135,
+  "supply": 993094814.631281,
   "burnedSince": 1783814400,
   "burned": {
-    "amount": 5841477,
-    "pct": 0.584,
-    "usd": 51.63,
-    "count": 5
+    "amount": 6364666,
+    "pct": 0.636,
+    "usd": 51.78,
+    "count": 6
   },
   "buyback": {
-    "summer": 48482553,
-    "sol": 4.4927,
-    "usd": 428.54,
-    "count": 97
+    "summer": 48962868,
+    "sol": 4.5518,
+    "usd": 398.31,
+    "count": 99
   },
   "ansem": {
     "summer": 41519018,
-    "usd": 366.99,
+    "usd": 337.76,
     "count": 26
   },
   "feed": [
+    {
+      "type": "buyback",
+      "time": 1785079682,
+      "summer": 321128,
+      "sol": 0.0399,
+      "sig": "2nn2yQcN9mfvEYwNM9knWVmVZCnYmEDXzdpQCdfEw5e6Adcqx7ibkqs2TWGpoXqgwiWi9XenjNLuuxZGK4YjVHfL"
+    },
+    {
+      "type": "burn",
+      "time": 1785068436,
+      "summer": 523189,
+      "sig": "cawTE6JHJgRW8wP2hzodQ7E15tf2pciqJvQqBAkTqMckbXfMhk5P5McS7RWZjXUuoNQSiE3vk9JiLf1Dc4HrXea"
+    },
+    {
+      "type": "buyback",
+      "time": 1785068412,
+      "summer": 159187,
+      "sol": 0.0192,
+      "sig": "3GagDntBJyfjptMDeZ8APk3aHNu5Z6s11vjwimahNCRxTcji9gifMHKj5U3HDXR8UxzeehgZkja5wy3KSQVvBPQX"
+    },
     {
       "type": "buyback",
       "time": 1785063529,
@@ -364,20 +384,6 @@
       "time": 1784358933,
       "summer": 1877811,
       "sig": "2mrhRW48FCvyzE66z6b9EVDX3n7gAyqCts2UHKXLSJQEtFhCdgUZ5BbSTh4uwTkmxG1UbTnnsUqCnjkAVzwCUZtB"
-    },
-    {
-      "type": "buyback",
-      "time": 1784358612,
-      "summer": 284202,
-      "sol": 0.0243,
-      "sig": "4iuY357JgGXy8fjN2nxyEnpSPz7TPFUcMxKEkoNpjgbW3MJ9naFcAppzonno9YEiKgC2nZxjBqsJJnnMYDzzjLEh"
-    },
-    {
-      "type": "buyback",
-      "time": 1784317713,
-      "summer": 378299,
-      "sol": 0.0333,
-      "sig": "3wxq94rrRpqjaoXRBV7SSg7RDPxjR9cfGdqZtSG8X4imaLzBW7NBHwPxUuQ5ud7qUqYkxr3GLd8CTadeo7uwsxmf"
     },
     {
       "type": "ansem",
