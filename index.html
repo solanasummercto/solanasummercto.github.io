@@ -330,7 +330,7 @@
       <h2 class="section-title">Tokenomics 🌴</h2>
       <p class="section-kicker">Simple, fair, and sunny</p>
       <div class="tok">
-        <div class="card"><div class="big">1B</div><div class="lbl">Total Supply</div></div>
+        <div class="card"><div class="big" id="tokSupply">1B</div><div class="lbl">Total Supply</div></div>
         <div class="card"><div class="big">0%</div><div class="lbl">Buy / Sell Tax</div></div>
         <div class="card"><div class="big">🔥</div><div class="lbl">LP Burned / Locked</div></div>
       </div>
@@ -582,12 +582,18 @@
       : 'Updated '+(baseline?.updatedAt ? ago(baseline.updatedAt) : 'just now');
   }
 
+  // Total Supply tile — live, since we keep burning. fmtToken → e.g. "993.9M".
+  const setSupply = n => { const el=document.getElementById('tokSupply'); n=Number(n); if(el && isFinite(n) && n>0) el.textContent = fmtToken(n); };
+  async function refreshSupply(){
+    try{ const s = await rpc('getTokenSupply',[MINT]); const ui = s?.value?.uiAmount; if(ui) setSupply(ui); }catch(e){}
+  }
   async function loadBaseline(){
     try{
       const res = await fetch('data/stats.json?t='+Math.floor(Date.now()/60000),{cache:'no-store'});
       if(!res.ok) return;
       baseline = await res.json();
       (baseline.feed||[]).forEach(e => seenSigs.add(e.sig));
+      if(baseline.supply) setSupply(baseline.supply);   // instant paint from the Action's snapshot
       renderAll();
     }catch(e){ const u=document.getElementById('enUpdated'); if(u&&!baseline) u.textContent='Syncing on-chain data…'; }
   }
@@ -696,6 +702,7 @@
     try{
       if(ANSEM_ATA===null) await resolveATAs();
       await poll();
+      await refreshSupply();
       await loadBaseline();
     }catch(e){}
     if(btn){
@@ -709,7 +716,7 @@
   // (fresh on every page refresh — but no continuous polling, so credits stay low).
   (async () => {
     await loadBaseline();
-    try { if(ANSEM_ATA===null) await resolveATAs(); await poll(); } catch(e){}
+    try { if(ANSEM_ATA===null) await resolveATAs(); await poll(); await refreshSupply(); } catch(e){}
   })();
   setInterval(loadBaseline, 60000);   // keep baseline current from the Action (free)
 </script>
