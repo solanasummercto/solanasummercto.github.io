@@ -474,7 +474,6 @@
   });
 
   // Live stats
-  const PAIR = "3UssEiCvizQfDdHYB15f39jD3D2ygiowtZZPHVj7wCsE";
   const fmtUsd = n => {
     n = Number(n);
     if(!isFinite(n)) return '—';
@@ -487,20 +486,23 @@
   };
   async function loadStats(){
     try{
-      const res = await fetch('https://api.dexscreener.com/latest/dex/pairs/solana/'+PAIR, {cache:'no-store'});
+      // Token endpoint (not a hardcoded pool) so price survives pool migrations.
+      const res = await fetch('https://api.dexscreener.com/latest/dex/tokens/'+CA, {cache:'no-store'});
       const data = await res.json();
-      const p = (data.pairs && data.pairs[0]) || data.pair;
+      const sol = (data.pairs||[]).filter(x=>x.chainId==='solana');
+      const p = sol.sort((a,b)=>(b.liquidity?.usd||0)-(a.liquidity?.usd||0))[0] || (data.pairs&&data.pairs[0]);
       if(!p) return;
-      const set = (id,val)=>{const el=document.getElementById(id);el.textContent=val;el.classList.remove('loading');};
+      const set = (id,val)=>{const el=document.getElementById(id); if(!el) return; el.textContent=val; el.classList.remove('loading');};
       set('stPrice', fmtUsd(p.priceUsd));
       set('stMcap',  fmtUsd(p.marketCap ?? p.fdv));
       set('stVol',   fmtUsd(p.volume && p.volume.h24));
-      const chg = p.priceChange && p.priceChange.h24;
       const chEl = document.getElementById('stChg');
-      const c = Number(chg);
-      chEl.textContent = (isFinite(c)?(c>=0?'+':'')+c.toFixed(1)+'%':'—');
-      chEl.style.color = isFinite(c) ? (c>=0 ? '#1ea85a' : '#e23d5b') : '';
-      chEl.classList.remove('loading');
+      if(chEl){
+        const c = Number(p.priceChange && p.priceChange.h24);
+        chEl.textContent = (isFinite(c)?(c>=0?'+':'')+c.toFixed(1)+'%':'—');
+        chEl.style.color = isFinite(c) ? (c>=0 ? '#1ea85a' : '#e23d5b') : '';
+        chEl.classList.remove('loading');
+      }
     }catch(e){/* keep placeholders */}
   }
   loadStats();
@@ -567,7 +569,8 @@
   function renderAll(flash){
     const c = combined();
     setV('enBurned', fmtToken(c.totals.burned.amount)+' 🔥');
-    setV('enBurnedSub', c.totals.burned.count+' dev burn'+(c.totals.burned.count===1?'':'s'));
+    const bpct = c.totals.burned.amount / 1e9 * 100;   // dev burns as a share of the 1B supply
+    setV('enBurnedSub', c.totals.burned.count+' dev burn'+(c.totals.burned.count===1?'':'s')+' · '+bpct.toFixed(2)+'% of supply');
     setV('enBuy', fmtToken(c.totals.buyback.summer));
     const parts=[]; if(c.totals.buyback.count) parts.push(c.totals.buyback.count+' buys');
     if(c.totals.buyback.sol) parts.push(c.totals.buyback.sol.toFixed(2)+' SOL');
@@ -625,7 +628,7 @@
     const cut=baseNewest(), fresh=[];
     for(const acct of accts){
       try{
-        const sigs=await rpc('getSignaturesForAddress',[acct,{limit:50}]);
+        const sigs=await rpc('getSignaturesForAddress',[acct,{limit:100}]);
         for(const s of sigs){ if(!s.err && s.blockTime && s.blockTime>cut && !seenSigs.has(s.signature) && !fresh.includes(s.signature)) fresh.push(s.signature); }
       }catch(e){}
     }
