@@ -37,7 +37,11 @@ async function getPrice() {
 
 async function main() {
   const prevEvents = await readJson(EVENTS, []);
-  const sinceTime = prevEvents.reduce((m, e) => Math.max(m, e.time || 0), 0);
+  // Normally incremental: only scan txns newer than the newest event we already have.
+  // Set RESCAN_SINCE (unix seconds) to force a deeper re-scan and backfill a gap.
+  const sinceTime = process.env.RESCAN_SINCE
+    ? Number(process.env.RESCAN_SINCE)
+    : prevEvents.reduce((m, e) => Math.max(m, e.time || 0), 0);
 
   // Only scan transactions newer than what we already have.
   const fresh = await scan(sinceTime).catch((e) => { console.error("scan failed:", e.message); return null; });

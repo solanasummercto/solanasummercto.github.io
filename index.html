@@ -10,14 +10,14 @@
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Solana Summer $SUMMER" />
 <meta property="og:description" content="It's always summer on Solana. ☀️ Grab your shades." />
-<meta property="og:image" content="assets/summer.png" />
+<meta property="og:image" content="assets/summer.png?v=2" />
 <meta property="og:url" content="https://solanasummer.perplana.com" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Solana Summer $SUMMER" />
 <meta name="twitter:description" content="It's always summer on Solana. ☀️" />
-<meta name="twitter:image" content="assets/summer.png" />
+<meta name="twitter:image" content="assets/summer.png?v=2" />
 
-<link rel="icon" type="image/png" href="assets/summer.png" />
+<link rel="icon" type="image/png" href="assets/summer.png?v=2" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet" />
@@ -245,7 +245,7 @@
 
 <nav>
   <div class="wrap">
-    <a class="brand" href="#top"><img src="assets/summer.png" alt="$SUMMER"/> Solana Summer</a>
+    <a class="brand" href="#top"><img src="assets/summer.png?v=2" alt="$SUMMER"/> Solana Summer</a>
     <div class="nav-links">
       <a class="txt" href="#buy">How to Buy</a>
       <a class="txt" href="#chart">Chart</a>
@@ -265,7 +265,7 @@
     <h1>Solana <span class="tick">$SUMMER</span></h1>
     <p class="tagline">Grab your shades. Ride the wave. 🌊</p>
     <p class="sub">The hottest meme of the season on Solana. No suits, no winter — just vibes, sunshine, and green candles.</p>
-    <img class="hero-logo" src="assets/summer.png" alt="Solana Summer logo"/>
+    <img class="hero-logo" src="assets/summer.png?v=2" alt="Solana Summer logo"/>
 
     <div class="ca">
       <span class="lbl">CA</span>
@@ -450,7 +450,7 @@
   <path fill="#12042e" d="M0,40 C240,80 480,0 720,30 C960,60 1200,10 1440,40 L1440,70 L0,70 Z"></path>
 </svg>
 <footer>
-  <a class="brand" href="#top"><img src="assets/summer.png" alt="" style="width:36px;height:36px;border-radius:10px"/> Solana Summer $SUMMER</a>
+  <a class="brand" href="#top"><img src="assets/summer.png?v=2" alt="" style="width:36px;height:36px;border-radius:10px"/> Solana Summer $SUMMER</a>
   <p>It's always summer on Solana. ☀️🌊🌴</p>
   <p class="disc">$SUMMER is a meme coin with no intrinsic value or expectation of financial return. This site is for entertainment purposes only and is not financial advice. Crypto is volatile — do your own research and never invest more than you can afford to lose.</p>
 </footer>
@@ -536,7 +536,7 @@
 
   let baseline = null;                 // latest stats.json
   let liveEvents = [];                 // events detected client-side (newer than baseline)
-  let DEV_ATA = null, ANSEM_ATA = null;
+  let ANSEM_ATA = null;   // DEV is watched by wallet address, not a token account
   const seenSigs = new Set();
 
   async function rpc(method, params){
@@ -592,12 +592,11 @@
     }catch(e){ const u=document.getElementById('enUpdated'); if(u&&!baseline) u.textContent='Syncing on-chain data…'; }
   }
   async function resolveATAs(){
+    // Only Ansem needs a token-account lookup — it accumulates in a stable ATA.
+    // DEV is watched by wallet address: its buy/burn bot uses throwaway token
+    // accounts it closes each cycle, so its ATA is usually gone between cycles.
     try{
-      const [d,a] = await Promise.all([
-        rpc('getTokenAccountsByOwner',[DEV,{mint:MINT},{encoding:'jsonParsed'}]),
-        rpc('getTokenAccountsByOwner',[ANSEM,{mint:MINT},{encoding:'jsonParsed'}]),
-      ]);
-      DEV_ATA = d.value[0]?.pubkey || null;
+      const a = await rpc('getTokenAccountsByOwner',[ANSEM,{mint:MINT},{encoding:'jsonParsed'}]);
       ANSEM_ATA = a.value[0]?.pubkey || null;
     }catch(e){}
   }
@@ -614,8 +613,8 @@
     return evs;
   }
   async function poll(){
-    if(!DEV_ATA && !ANSEM_ATA) await resolveATAs();
-    const accts=[DEV_ATA,ANSEM_ATA].filter(Boolean);
+    if(ANSEM_ATA===null) await resolveATAs();
+    const accts=[DEV,ANSEM_ATA].filter(Boolean);   // DEV = wallet address, always watched
     if(!accts.length) return;
     const cut=baseNewest(), fresh=[];
     for(const acct of accts){
@@ -695,7 +694,7 @@
     if(btn && btn.disabled) return;
     if(btn){ btn.dataset.label = btn.dataset.label || btn.textContent; btn.disabled = true; btn.textContent = '⏳ Checking…'; }
     try{
-      if(!DEV_ATA && !ANSEM_ATA) await resolveATAs();
+      if(ANSEM_ATA===null) await resolveATAs();
       await poll();
       await loadBaseline();
     }catch(e){}
@@ -710,7 +709,7 @@
   // (fresh on every page refresh — but no continuous polling, so credits stay low).
   (async () => {
     await loadBaseline();
-    try { if(!DEV_ATA && !ANSEM_ATA) await resolveATAs(); await poll(); } catch(e){}
+    try { if(ANSEM_ATA===null) await resolveATAs(); await poll(); } catch(e){}
   })();
   setInterval(loadBaseline, 60000);   // keep baseline current from the Action (free)
 </script>

@@ -76,10 +76,14 @@ function solDeltaDev(tx) {
 // Scan from scratch (sinceTime=0) or only txns newer than sinceTime (unix secs).
 // Returns { events:[...], newestTime } — events are raw, deduped by sig upstream.
 export async function scan(sinceTime = 0) {
-  const devAcct = await tokenAccount(DEV);
+  // Watch the DEV WALLET directly, not its token account. The buyback/burn bot
+  // buys SUMMER into a throwaway token account and burns + closes it every cycle,
+  // so getTokenAccountsByOwner(DEV) is usually empty between cycles. The wallet
+  // signs and pays fees for every buy and burn, so its signatures always contain
+  // them. Ansem still accumulates in a stable ATA, so watch that account as before.
   const ansemAcct = await tokenAccount(ANSEM);
   const set = new Set();
-  if (devAcct) (await allSigs(devAcct, sinceTime)).forEach((s) => set.add(s));
+  (await allSigs(DEV, sinceTime)).forEach((s) => set.add(s));
   if (ansemAcct) (await allSigs(ansemAcct, sinceTime)).forEach((s) => set.add(s));
   const sigs = [...set];
 
