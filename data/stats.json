@@ -1,13 +1,13 @@
 {
-  "updatedAt": "2026-07-30T18:04:42.404Z",
+  "updatedAt": "2026-07-30T21:53:45.356Z",
   "price": 0.000003953,
-  "supply": 992517983.186698,
+  "supply": 991740635.29204,
   "burnedSince": 1783814400,
   "burned": {
-    "amount": 6941497,
-    "pct": 0.694,
-    "usd": 27.44,
-    "count": 7
+    "amount": 7718845,
+    "pct": 0.772,
+    "usd": 30.51,
+    "count": 8
   },
   "buyback": {
     "summer": 49995920,
@@ -21,6 +21,12 @@
     "count": 26
   },
   "feed": [
+    {
+      "type": "burn",
+      "time": 1785435074,
+      "summer": 777348,
+      "sig": "wyBzy4CbEGBJnS8Foz3F4ufBpD5PMKaivhaLGbLc3qXoknTEqBbipXDwaXdPBiRgsS7TgthfVFWYauYWx9c86bN"
+    },
     {
       "type": "buyback",
       "time": 1785181033,
