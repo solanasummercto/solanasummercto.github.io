@@ -1,23 +1,23 @@
 {
-  "updatedAt": "2026-08-07T23:51:54.705Z",
-  "price": 0.000002912,
+  "updatedAt": "2026-08-08T03:59:36.891Z",
+  "price": 0.000002911,
   "supply": 991740635.292039,
   "burnedSince": 1783814400,
   "burned": {
     "amount": 7718845,
     "pct": 0.772,
-    "usd": 22.48,
+    "usd": 22.47,
     "count": 8
   },
   "buyback": {
     "summer": 49995920,
     "sol": 4.6406,
-    "usd": 145.59,
+    "usd": 145.54,
     "count": 102
   },
   "ansem": {
     "summer": 41519018,
-    "usd": 120.9,
+    "usd": 120.86,
     "count": 26
   },
   "feed": [
